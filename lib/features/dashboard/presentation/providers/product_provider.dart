@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
-import '../../data/Models/product_model.dart';
+import '../../../../../features/dashboard/data/Models/product_model.dart';
 import '../../../../core/services/dio_client.dart';
 import '../../../../core/constants/api_constant.dart';
 
