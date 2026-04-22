@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -105,25 +106,35 @@ class AuthProvider extends ChangeNotifier {
   // ─── VERIFY TOKEN KE BACKEND ─────────────────────────────
   Future<bool> _verifyTokenToBackend() async {
     try {
-      final firebaseToken = await _firebaseUser?.getIdToken();
+      final firebaseToken = await _firebaseUser?.getIdToken(true);
+      print("TOKEN YANG DIKIRIM: $firebaseToken");
 
+      // Gunakan instance Dio baru atau bypass header
       final response = await DioClient.instance.post(
         ApiConstant.verifyToken,
         data: {'firebase_token': firebaseToken},
+        options: Options(
+          headers: {
+            // Kita kirim Firebase Token di Header Authorization
+            // karena biasanya backend Go mengeceknya di sana
+            'Authorization': 'Bearer $firebaseToken',
+          },
+        ),
       );
 
-      final data = response.data['data'] as Map<String, dynamic>;
-      final backendToken = data['access_token'] as String;
+      // Sesuaikan mapping data dengan response JSON Golang kamu
+      // Jika backend kamu mengembalikan { "data": { "token": "..." } }
+      final data = response.data['data'];
+      final token = data['token'] ?? data['access_token'];
 
-      _backendToken = backendToken;
-
-      await SecureStorageService.saveToken(backendToken);
+      _backendToken = token;
+      await SecureStorageService.saveToken(token);
 
       _status = AuthStatus.authenticated;
       notifyListeners();
-
       return true;
     } catch (e) {
+      debugPrint("Detail Error Backend: $e"); // Cek di console log
       _setError("Gagal verifikasi ke server");
       return false;
     }
@@ -230,15 +241,12 @@ class AuthProvider extends ChangeNotifier {
   }
 
   String _mapFirebaseError(String code) => switch (code) {
-        'email-already-in-use' =>
-          'Email sudah terdaftar. Gunakan email lain.',
-        'user-not-found' => 'Akun tidak ditemukan. Silakan daftar.',
-        'wrong-password' => 'Password salah. Coba lagi.',
-        'invalid-email' => 'Format email tidak valid.',
-        'weak-password' =>
-          'Password terlalu lemah. Minimal 6 karakter.',
-        'network-request-failed' =>
-          'Tidak ada koneksi internet.',
-        _ => 'Terjadi kesalahan. Coba lagi.',
-      };
+    'email-already-in-use' => 'Email sudah terdaftar. Gunakan email lain.',
+    'user-not-found' => 'Akun tidak ditemukan. Silakan daftar.',
+    'wrong-password' => 'Password salah. Coba lagi.',
+    'invalid-email' => 'Format email tidak valid.',
+    'weak-password' => 'Password terlalu lemah. Minimal 6 karakter.',
+    'network-request-failed' => 'Tidak ada koneksi internet.',
+    _ => 'Terjadi kesalahan. Coba lagi.',
+  };
 }
