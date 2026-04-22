@@ -22,29 +22,47 @@ class DioClient {
         receiveTimeout: const Duration(
           milliseconds: ApiConstant.receiveTimeout,
         ),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+        },
       ),
     );
 
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          debugPrint('Request: ${options.method} ${options.path}');
+          final token =
+              await SecureStorageService.getToken();
+
+          if (token != null && token.isNotEmpty) {
+            options.headers["Authorization"] =
+                "Bearer $token";
+          }
+
+          debugPrint(
+              'Request: ${options.method} ${options.path}');
           handler.next(options);
         },
-        onResponse: (response, handler) async {
-          debugPrint('Response: ${response.statusCode}');
+
+        onResponse: (response, handler) {
+          debugPrint(
+              'Response: ${response.statusCode}');
           handler.next(response);
         },
+
         onError: (error, handler) async {
-          debugPrint('Error: ${error.response?.statusCode}');
+          debugPrint(
+              'Error: ${error.response?.statusCode}');
+
           if (error.response?.statusCode == 401) {
             await SecureStorageService.clearAll();
           }
+
           handler.next(error);
         },
       ),
     );
+
     return dio;
   }
 }

@@ -21,16 +21,40 @@ class ProductModel extends Equatable {
     required this.isActive,
   });
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-        id: json['ID'] as int? ?? json['id'] as int? ?? 0,
-        name: json['name'] as String? ?? '',
-        description: json['description'] as String? ?? '',
-        price: (json['price'] as num?)?.toDouble() ?? 0.0,
-        stock: json['stock'] as int? ?? 0,
-        category: json['category'] as String? ?? '',
-        imageUrl: json['image_url'] as String? ?? '',
-        isActive: json['is_active'] as bool? ?? true,
-      );
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      id: (json['ID'] ?? json['id'] ?? 0) as int,
+
+      name: (json['Name'] ??
+              json['name'] ??
+              '') as String,
+
+      description: (json['Description'] ??
+              json['description'] ??
+              '') as String,
+
+      price: ((json['Price'] ??
+                  json['price'] ??
+                  0) as num)
+              .toDouble(),
+
+      stock: (json['Stock'] ??
+              json['stock'] ??
+              0) as int,
+
+      category: (json['Category'] ??
+              json['category'] ??
+              '') as String,
+
+      imageUrl: (json['ImageURL'] ??
+              json['image_url'] ??
+              '') as String,
+
+      isActive: (json['IsActive'] ??
+              json['is_active'] ??
+              true) as bool,
+    );
+  }
 
   @override
   List<Object?> get props => [
