@@ -18,7 +18,7 @@ Aplikasi ini di rancang dengan :
 - [Golang-beckend](https://github.com/muhamadayeshaaulia/semester6.4_Firebase_Authentication_Lanjutan.git) - sebagai backend API untuk menghubungkan Mysql ke Front-End
 - [Mysql](https://www.apachefriends.org/download.html) - sebagai database local
 
-# Tampilan UI untuk APlikasi ini
+# Tampilan UI untuk Aplikasi ini
 
  * Tampilan ketika awal pertama kali aplikasi berjalan
 <p align="center">
