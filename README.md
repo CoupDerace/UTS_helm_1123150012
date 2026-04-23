@@ -1,4 +1,4 @@
-# UTS Pemrograman Mobile Lanjutan
+# UTS Mobile Application Lanjutan
 
 # Pengembang
  * Muhammad Turtusi Afrizal Perdana 
