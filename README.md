@@ -1,4 +1,4 @@
-# UTS Pemerograman Mobile Lanjutan
+# UTS Pemrograman Mobile Lanjutan
 
 # Pengembang
  * Muhammad Turtusi Afrizal Perdana 
@@ -6,7 +6,7 @@
  * TI SE 23 P1
  * Teknik Informatika
  * Software Engineering 
- * [Link-Youtube-presentation](https://youtu.be/Jyag6PCHHvY?si=S2vp7k-C7Z-Ihvrz)
+ * [Link-Youtube-presentation](https://youtu.be/M-ljx72LOR4?si=JOpEjEWGiu_ybY7P)
 
 # Aplikasi E-commerce Toko Helm
 
@@ -22,83 +22,33 @@ Aplikasi ini di rancang dengan :
 
  * Tampilan ketika awal pertama kali aplikasi berjalan
 <p align="center">
-  <img src="assets/images/gambar1.jpg" width="200"/>
-  <img src="assets/images/gambar2.jpg" width="200"/>
-  <img src="assets/images/gambar3.jpg" width="200"/>
+ <img width="720" height="1612" alt="Screenshot_20260423-141536" src="https://github.com/user-attachments/assets/58f8f478-336b-45c6-a728-359bd6f27eae" />
 </p>
 
- * Tampilan halaman Login register & email Verified
+ * Tampilan halaman Login, register & email Verified
  <p align="center">
-  <img src="assets/images/login_screen.jpg" width="200"/>
-  <img src="assets/images/register_screen.jpg" width="200"/>
-  <img src="assets/images/verified_email.jpg" width="200"/>
+<img width="720" height="1612" alt="Screenshot_20260423-131115" src="https://github.com/user-attachments/assets/1bf0140d-afcd-4b9a-ac3e-fb82a8a9775a" />
+<img width="720" height="1612" alt="Screenshot_20260423-131140" src="https://github.com/user-attachments/assets/b739236e-73f4-456f-9d05-7b5d26c9abd5" />
+<img width="720" height="1612" alt="Screenshot_20260423-141117" src="https://github.com/user-attachments/assets/efa4ce08-5d9d-4f7d-b1cf-af366b95fd67" />
 </p>
 
- * Setelah aplikasi mengirimkan aplikasi cek email & klik email untuk verified
-  <p align="center">
-  <img src="assets/images/link_verified.jpg" width="200"/>
-  <img src="assets/images/ter_verified.jpg" width="200"/>
-</p>
 
  * Setelah email terverifikasi makan aplikasi langsung mengarahkan ke halaman dashboard
  <p align="center">
-  <img src="assets/images/katalog.jpg" width="200"/>
+  <img width="720" height="1612" alt="Screenshot_20260423-131104" src="https://github.com/user-attachments/assets/c1125d1f-27af-4f00-805a-283dd3db96bb" />
+
 </p>
 
- * Fitur di dalam aplikasi ketika user memasuki aplikasi
+ * ketika user login langsung menggunakan Google
   <p align="center">
-  <img src="assets/images/katalog.jpg" width="200"/>
-  <img src="assets/images/cart_kosong.jpg" width="200"/>
-  <img src="assets/images/informasi.jpg" width="200"/>
+  <img width="720" height="1612" alt="Screenshot_20260423-131121" src="https://github.com/user-attachments/assets/dc3fd6d5-c4b4-49a5-aa10-7e866fed0ac2" />
+
 </p>
 
- * Ketika user melakukan pembelian barang di katalog
+ * langsung menampilkan halaman dashboard dan username di dashboard menyesuaikan dengan username yang sudah di atur pada akun Google
  <p align="center">
-  <img src="assets/images/notif_beli_katalog.jpg" width="200"/>
-</p>
+<img width="720" height="1612" alt="Screenshot_20260423-131132" src="https://github.com/user-attachments/assets/01590067-2295-4934-8758-d0fa9ccdb92a" />
 
- * keranjang yang awalnya kosong sekarang sudah ada detail produk dan harga produk di dalam nya
-  <p align="center">
-  <img src="assets/images/cart_berisi.jpg" width="200"/>
-</p>
+ </p>
 
-* User dapat menambahkan atau mengurangi produk di keranjang dan sistem memberikan notifikasi kepada user
-  <p align="center">
-  <img src="assets/images/notif_tambah_cart.jpg" width="200"/>
-</p>
-
-* Setelah user memastikan dan memasukan barang nya ke keranjang user masuk ke halaman untuk melakukan pembayaran
-  <p align="center">
-  <img src="assets/images/chekout.jpg" width="200"/>
-</p>
-
-* Setelah melakukan pembayaran user akan di kembalikan ke halaman katalog dan user mendapatkan notifikasi
-  <p align="center">
-  <img src="assets/images/notifikasi_chekout.jpg" width="200"/>
-  <img src="assets/images/katalog.jpg" width="200"/>
-</p>
-
-* Setelah berhasil melakukan pembayaran otomasit cart milik si user kosong tidak ada produk di dalam keranjang
-  <p align="center">
-  <img src="assets/images/cart_kosong.jpg" width="200"/>
-</p>
-
-* Lanjut ke halaman profile di sini ada 2 kategori role Admin & User karena di admin ada kelola produk
-  <p align="center">
-  <img src="assets/images/profile_admin.jpg" width="200"/>
-  <img src="assets/images/profile_user.jpg" width="200"/>
-</p>
-
-* Masuk sebagai role admin ke halaman kelola produk untuk menambahkan produk edit dan hapus produk
-  <p align="center">
-  <img src="assets/images/kelola_produk.jpg" width="200"/>
-  <img src="assets/images/tambah_produk.jpg" width="200"/>
-  <img src="assets/images/tambah_produk2.jpg" width="200"/>
-  <img src="assets/images/edit_produk.jpg" width="200"/>
-</p>
-
-* Bukan hanya sekedari ui Aplikasi di sini mampu memberikan notifikasi lokal ketika berhasil add produk & edit produk
-  <p align="center">
-  <img src="assets/images/notif_produk.jpg" width="200"/>
-  <img src="assets/images/notif_edit_produk.jpg" width="200"/>
-</p>
+ 
