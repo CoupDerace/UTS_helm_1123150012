@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:uts_catalog_helm/core/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:uts_catalog_helm/features/dashboard/presentation/providers/product_provider.dart';
 import 'firebase_options.dart';
 import './features/auth/presentation/providers/auth_provider.dart';
-import './features/dashboard/presentation/providers/product_provider.dart';
 import './core/theme/app_theme.dart';
 import './core/services/secure_storage.dart';
 import './core/routes/app_router.dart';
@@ -17,6 +18,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
       ],
@@ -30,6 +32,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
@@ -39,6 +42,8 @@ class MyApp extends StatelessWidget {
         title: 'My App',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: themeProvider.themeMode,
         initialRoute: AppRouter.splash,
         routes: AppRouter.routes,
       ),
