@@ -51,4 +51,13 @@ Aplikasi ini di rancang dengan :
 
  </p>
 
- 
+ </p>
+
+ * tambah fitur dark mode ( mode gelap )
+ <p align="center">
+ketika light mode
+<img width="720" height="1612" alt="Screenshot_20260504-153555" src="https://github.com/user-attachments/assets/1690ffab-a057-4609-8f1d-5a41e66cb82b" />
+ketika dark mode
+<img width="720" height="1612" alt="Screenshot_20260504-153535" src="https://github.com/user-attachments/assets/8acb1548-a4e1-41e9-8360-5ba4c0ac7a73" />
+
+ </p>
