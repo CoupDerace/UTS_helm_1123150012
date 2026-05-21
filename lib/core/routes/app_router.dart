@@ -23,4 +23,6 @@ class AppRouter {
     verifyEmail: (_) => const VerifyEmailPage(),
     dashboard:   (_) => const AuthGuard(child: DashboardPage()),
   };
+
+  static String get cart => '/cart';
 }

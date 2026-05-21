@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uts_catalog_helm/core/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:uts_catalog_helm/features/cart/presentation/pages/cart_pages.dart';
 import 'package:uts_catalog_helm/features/dashboard/presentation/providers/product_provider.dart';
 import 'firebase_options.dart';
 import './features/auth/presentation/providers/auth_provider.dart';
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
         darkTheme: AppTheme.dark,
         themeMode: themeProvider.themeMode,
         initialRoute: AppRouter.splash,
-        routes: AppRouter.routes,
+        routes: { ...AppRouter.routes, AppRouter.cart: (_) => const CartPage() },
       ),
     );
   }
