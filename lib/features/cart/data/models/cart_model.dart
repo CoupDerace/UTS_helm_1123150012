@@ -84,6 +84,7 @@ class CartModel {
     );
 
     return CartModel(
+      id: json['id'] as int? ?? 0,
       items: items,
       total: total,
       itemCount: itemCount,
