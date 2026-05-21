@@ -33,7 +33,7 @@ class CartProvider extends ChangeNotifier {
   Future<bool> addToCart(int productId, int quantity) async {
     _isAdding = true;
     notifyListeners();
-    
+
     try {
       await _repository.addToCart(productId, quantity);
       await fetchCart();
@@ -47,4 +47,16 @@ class CartProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<void> updateItem(int cartItemId, int quantity) async {
+    try {
+      await _repository.updateCartItem(cartItemId, quantity);
+      await fetchCart();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  
 }
