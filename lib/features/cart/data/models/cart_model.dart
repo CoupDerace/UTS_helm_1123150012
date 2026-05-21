@@ -61,11 +61,32 @@ class CartModel {
   final int id;
   final List<CartItemModel> items;
   final double total;
+  final int itemCount;
 
   CartModel({
     required this.id,
     required this.items,
     required this.total,
+    required this.itemCount,
   });
-  
+
+  factory CartModel.fromJson(Map<String, dynamic> json) {
+    final items = (json['items'] as List<dynamic>? ?? [])
+        .map((e) => CartItemModel.fromJson(e))
+        .toList();
+    final total = items.fold<double>(
+      0.0,
+      (sum, item) => sum + item.subtotal,
+    );
+    final itemCount = items.fold<int>(
+      0,
+      (sum, item) => sum + item.quantity,
+    );
+
+    return CartModel(
+      items: items,
+      total: total,
+      itemCount: itemCount,
+    );
+  }
 }
