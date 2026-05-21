@@ -12,4 +12,8 @@ class ApiConstant {
   static const int receiveTimeout = 15000;
 
   static String cart;
+
+  static String orders;
+
+  static String get checkout => null;
 }
