@@ -29,4 +29,22 @@ class CartProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<bool> addToCart(int productId, int quantity) async {
+    _isAdding = true;
+    notifyListeners();
+    
+    try {
+      await _repository.addToCart(productId, quantity);
+      await fetchCart();
+      _isAdding = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _isAdding = false;
+      notifyListeners();
+      return false;
+    }
+  }
 }
