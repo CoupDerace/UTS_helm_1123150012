@@ -13,6 +13,8 @@ class AppRouter {
   static const String verifyEmail = '/verify-email';
   static const String dashboard   = '/dashboard';
 
+  static String checkout;
+
 
   static Map<String, WidgetBuilder> get routes => {
     splash:      (_) => const SplashPage(),
