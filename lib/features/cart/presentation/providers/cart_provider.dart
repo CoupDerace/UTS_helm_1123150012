@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:uts_catalog_helm/features/cart/data/models/cart_model.dart';
-
+import 'package:uts_catalog_helm/features/cart/domain/repositories/cart_repository.dart';
+import 'package:uts_catalog_helm/features/cart/data/repositories/cart_repository_impl.dart';
 enum CartStatus { initial, loading, loaded, error }
 
 class CartProvider extends ChangeNotifier {
+  final CartRepository _repository = CartRepositoryImpl();
   CartStatus _status = CartStatus.initial;
   CartModel? _cart;
   String? _error;
