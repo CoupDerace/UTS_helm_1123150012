@@ -58,5 +58,13 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  
+  Future<void> removeItem(int cartItemId) async {
+    try {
+      await _repository.removeCartItem(cartItemId);
+      await fetchCart();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
 }
