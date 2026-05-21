@@ -45,7 +45,7 @@ class AuthResponseModel {
     required this.user,
   });
 
-  factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
+  factory AuthResponseModel   .fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>;
     return AuthResponseModel(
       success: json['success'] as bool,

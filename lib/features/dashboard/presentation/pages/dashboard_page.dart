@@ -29,20 +29,36 @@ class _DashboardPageState extends State<DashboardPage> {
     final themeProvider = context.watch<ThemeProvider>();
     final isDark = themeProvider.isDark;
 
+    /// THEME COLORS (otomatis ikut light/dark)
+    final theme = Theme.of(context);
+    final color = theme.colorScheme;
+
+    final surface = color.surface;
+    final onSurface = color.onSurface;
+    final primary = color.primary;
+    final outline = color.outlineVariant;
+    final error = color.error;
+
     return Scaffold(
+      backgroundColor: surface,
+
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Dashboard',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(
+                fontSize: 18,
+                color: onSurface,
+              ),
             ),
             Text(
               'Halo, ${auth.firebaseUser?.displayName ?? 'User'}!',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.normal,
+                color: onSurface.withOpacity(0.75),
               ),
             ),
           ],
@@ -72,8 +88,10 @@ class _DashboardPageState extends State<DashboardPage> {
               horizontal: 16,
               vertical: 10,
             ),
+            color: surface,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
@@ -84,13 +102,16 @@ class _DashboardPageState extends State<DashboardPage> {
                       size: 20,
                       color: isDark
                           ? Colors.amber
-                          : Colors.grey,
+                          : primary,
                     ),
                     const SizedBox(width: 10),
                     Text(
                       isDark
                           ? 'Mode Gelap'
                           : 'Mode Terang',
+                      style: TextStyle(
+                        color: onSurface,
+                      ),
                     ),
                   ],
                 ),
@@ -106,44 +127,52 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
 
-          /// CONTENT
           Expanded(
             child: switch (product.status) {
               ProductStatus.initial ||
               ProductStatus.loading =>
-                const Center(
+                Center(
                   child: Column(
                     mainAxisAlignment:
                         MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text('Memuat produk...'),
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Memuat produk...',
+                        style: TextStyle(
+                          color: onSurface,
+                        ),
+                      ),
                     ],
                   ),
                 ),
 
-              ProductStatus.error => Center(
+              ProductStatus.error =>
+                Center(
                   child: Column(
                     mainAxisAlignment:
                         MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.error_outline,
                         size: 64,
-                        color: Colors.red,
+                        color: error,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         product.error ??
                             'Terjadi kesalahan',
+                        style: TextStyle(
+                          color: onSurface,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
-                        icon:
-                            const Icon(Icons.refresh),
-                        label:
-                            const Text('Coba Lagi'),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text(
+                          'Coba Lagi',
+                        ),
                         onPressed: () {
                           product.fetchProducts();
                         },
@@ -174,6 +203,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           product.products[index];
 
                       return Card(
+                        color: surface,
                         elevation: 2,
                         shape:
                             RoundedRectangleBorder(
@@ -184,8 +214,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         child: Column(
                           crossAxisAlignment:
-                              CrossAxisAlignment
-                                  .start,
+                              CrossAxisAlignment.start,
                           children: [
                             ClipRRect(
                               borderRadius:
@@ -194,8 +223,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   12,
                                 ),
                               ),
-                              child:
-                                  Image.network(
+                              child: Image.network(
                                 p.imageUrl,
                                 height: 120,
                                 width:
@@ -205,9 +233,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     (_, __, ___) {
                                   return Container(
                                     height: 120,
-                                    color: Colors
-                                        .grey
-                                        .shade200,
+                                    color: outline,
                                     child:
                                         const Icon(
                                       Icons
@@ -226,8 +252,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                               child: Column(
                                 crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
+                                    CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     p.name,
@@ -236,12 +261,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                         TextOverflow
                                             .ellipsis,
                                     style:
-                                        const TextStyle(
+                                        TextStyle(
                                       fontWeight:
                                           FontWeight
                                               .bold,
                                       fontSize:
                                           14,
+                                      color:
+                                          onSurface,
                                     ),
                                   ),
 
@@ -252,10 +279,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                   Text(
                                     'Rp ${p.price.toStringAsFixed(0)}',
                                     style:
-                                        const TextStyle(
-                                      color: Color(
-                                        0xFF1565C0,
-                                      ),
+                                        TextStyle(
+                                      color:
+                                          primary,
                                       fontWeight:
                                           FontWeight
                                               .w600,
@@ -276,9 +302,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     ),
                                     decoration:
                                         BoxDecoration(
-                                      color: Colors
-                                          .blue
-                                          .shade50,
+                                      color: primary
+                                          .withOpacity(
+                                              0.12),
                                       borderRadius:
                                           BorderRadius.circular(
                                         20,
@@ -287,13 +313,11 @@ class _DashboardPageState extends State<DashboardPage> {
                                     child: Text(
                                       p.category,
                                       style:
-                                          const TextStyle(
+                                          TextStyle(
                                         fontSize:
                                             11,
                                         color:
-                                            Color(
-                                          0xFF1565C0,
-                                        ),
+                                            primary,
                                       ),
                                     ),
                                   ),
