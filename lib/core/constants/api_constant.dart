@@ -11,9 +11,9 @@ class ApiConstant {
   static const int connectTimeout = 15000;
   static const int receiveTimeout = 15000;
 
-  static String cart;
+  static String cart = '/cart';
 
-  static String orders;
+  static String orders = '/orders';
 
-  static String get checkout => null;
+  static String get checkout => '/checkout';
 }

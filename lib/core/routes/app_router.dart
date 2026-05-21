@@ -13,7 +13,7 @@ class AppRouter {
   static const String verifyEmail = '/verify-email';
   static const String dashboard   = '/dashboard';
 
-  static String checkout;
+  static String checkout = '/checkout';
 
 
   static Map<String, WidgetBuilder> get routes => {
