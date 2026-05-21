@@ -22,6 +22,22 @@ class CartProductModel {
       category: json['category'] as String? ?? '',
     );
   }
+}
+
+class CartItemModel {
+  final int id;
+  final int productId;
+  final CartProductModel product;
+  final int quantity;
+  final double subtotal;
+
+  CartItemModel({
+    required this.id,
+    required this.productId,
+    required this.product,
+    required this.quantity,
+    required this.subtotal,
+  });
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) {
     final product = CartProductModel.fromJson(
