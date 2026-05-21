@@ -22,4 +22,12 @@ class CartProductModel {
       category: json['category'] as String? ?? '',
     );
   }
+
+  factory CartItemModel.fromJson(Map<String, dynamic> json) {
+    final product = CartProductModel.fromJson
+      (json['product'] as Map<String, dynamic>? ?? {}
+    );
+    
+  }
 }
+
