@@ -1,6 +1,19 @@
-enum CartStatus {
-  initial,
-  loading,
-  loaded,
-  error
+import 'package:flutter/material.dart';
+import 'package:uts_catalog_helm/features/cart/data/models/cart_model.dart';
+
+enum CartStatus { initial, loading, loaded, error }
+
+class CartProvider extends ChangeNotifier {
+  CartStatus _status = CartStatus.initial;
+  CartModel? _cart;
+  String? _error;
+  bool _isAdding = false;
+  
+  CartStatus get status => _status;
+  CartModel? get cart => _cart;
+  String? get error => _error;
+  bool get isAdding => _isAdding;
+  int get itemCount => _cart?.itemCount ?? 0;
+
+  
 }
