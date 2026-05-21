@@ -67,4 +67,17 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> clearCart() async {
+    try {
+      await _repository.clearCart();
+      _cart = CartModel(id: 0, items: [], total: 0, itemCount: 0);
+      _status = CartStatus.loaded;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      _status = CartStatus.error;
+      notifyListeners();
+    }
+  }
 }
