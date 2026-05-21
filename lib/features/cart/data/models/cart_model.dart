@@ -24,10 +24,19 @@ class CartProductModel {
   }
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) {
-    final product = CartProductModel.fromJson
-      (json['product'] as Map<String, dynamic>? ?? {}
+    final product = CartProductModel.fromJson(
+      json['product'] as Map<String, dynamic>? ?? {},
     );
-    
+    final quantity = json['quantity'] as int? ?? 0;
+    final apiSubtotal = (json['subtotal'] as num?)?.toDouble() ?? 0.0;
+    final subtotal = apiSubtotal > 0 ? apiSubtotal : product.price * quantity;
+
+    return CartItemModel(
+      id: json['id'] as int? ?? 0,
+      productId: json['product_id'] as int? ?? 0,
+      product: product,
+      quantity: quantity,
+      subtotal: subtotal,
+    );
   }
 }
-
