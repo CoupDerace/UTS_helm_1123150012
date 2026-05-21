@@ -52,4 +52,40 @@ class OrderModel {
     required this.items,
     required this.createdAt,
   });
+
+factory OrderModel.fromJson(Map<String, dynamic> json) {
+
+    // Ambil list item order
+    final items = (json['items'] as List<dynamic>? ?? [])
+        .map((e) => OrderItemModel.fromJson(e))
+        .toList();
+
+    // Hitung total dari subtotal item
+    final calculatedTotal = items.fold<double>(
+      0.0,
+      (sum, item) => sum + item.subtotal,
+    );
+
+    // Pakai total API kalau ada
+    final apiTotal =
+        (json['total_amount'] as num?)?.toDouble() ?? 0.0;
+
+    final total =
+        apiTotal > 0
+            ? apiTotal
+            : calculatedTotal;
+
+    return OrderModel(
+      id: json['id'] as int? ?? 0,
+      totalAmount: total,
+      status: json['status'] as String? ?? 'pending',
+      shippingAddress:
+          json['shipping_address'] as String? ?? '',
+      notes: json['notes'] as String? ?? '',
+      paymentMethod:
+          json['payment_method'] as String? ?? '',
+      items: items,
+      createdAt: json['created_at'] as String? ?? '',
+    );
+  }
 }
