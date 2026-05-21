@@ -56,3 +56,16 @@ class CartItemModel {
     );
   }
 }
+
+class CartModel {
+  final int id;
+  final List<CartItemModel> items;
+  final double total;
+
+  CartModel({
+    required this.id,
+    required this.items,
+    required this.total,
+  });
+  
+}
