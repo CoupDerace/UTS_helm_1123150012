@@ -8,12 +8,25 @@ class CartProvider extends ChangeNotifier {
   CartModel? _cart;
   String? _error;
   bool _isAdding = false;
-  
+
   CartStatus get status => _status;
   CartModel? get cart => _cart;
   String? get error => _error;
   bool get isAdding => _isAdding;
   int get itemCount => _cart?.itemCount ?? 0;
 
-  
+  Future<void> fetchCart() async {
+    _status = CartStatus.loading;
+    notifyListeners();
+
+    try {
+      final result = await _repository.getCart();
+      _cart = result;
+      _status = CartStatus.loaded;
+    } catch (e) {
+      _error = e.toString();
+      _status = CartStatus.error;
+    }
+    notifyListeners();
+  }
 }
