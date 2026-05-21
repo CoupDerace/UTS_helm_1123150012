@@ -33,16 +33,24 @@ class OrderProvider extends ChangeNotifier {
       );
 
       _lastOrder = result;
-
       _checkoutStatus = OrderStatus.success;
-
       notifyListeners();
-
       return true;
     } catch (e) {
       _setError(e.toString());
-
       return false;
     }
+  }
+
+  void _setLoading() {
+    _checkoutStatus = OrderStatus.loading;
+    _error = null;
+    notifyListeners();
+  }
+
+  void _setError(String message) {
+    _error = message;
+    _checkoutStatus = OrderStatus.error;
+    notifyListeners();
   }
 }
