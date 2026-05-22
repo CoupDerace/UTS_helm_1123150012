@@ -15,7 +15,7 @@ class CartProvider extends ChangeNotifier {
   CartModel? get cart => _cart;
   String? get error => _error;
   bool get isAdding => _isAdding;
-  int get itemCount => _cart?.itemCount ?? 0;
+  int get itemCount => _cart?.items.length ?? 0;
 
   Future<void> fetchCart() async {
     _status = CartStatus.loading;
@@ -73,7 +73,7 @@ class CartProvider extends ChangeNotifier {
   Future<void> clearCart() async {
     try {
       await _repository.clearCart();
-      _cart = CartModel(id: 0, items: [], total: 0, itemCount: 0);
+      _cart = CartModel(items: [], total: 0,);
       _status = CartStatus.loaded;
       notifyListeners();
     } catch (e) {

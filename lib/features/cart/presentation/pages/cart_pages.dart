@@ -143,7 +143,7 @@ class _CartPageState extends State<CartPage> {
                 ),
               ),
               _CartBottomBar(
-                total: cart.total,
+                total: cart.totalPrice,
                 formatPrice: _formatPrice,
                 onCheckout: () {
                   Navigator.pushNamed(context, AppRouter.checkout);
@@ -244,9 +244,9 @@ class _CartItemCard extends StatelessWidget {
             // Gambar produk
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: item.product.imageUrl.isNotEmpty
+              child: item.imageUrl.isNotEmpty
                   ? Image.network(
-                      item.product.imageUrl,
+                      item.imageUrl,
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,
@@ -268,7 +268,7 @@ class _CartItemCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item.product.category,
+                              'Helm',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: onSurface.withValues(alpha: 0.5),
@@ -276,7 +276,7 @@ class _CartItemCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              item.product.name,
+                              item.name,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -302,7 +302,7 @@ class _CartItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    formatPrice(item.product.price),
+                    formatPrice(item.price),
                     style: TextStyle(
                       fontSize: 12,
                       color: onSurface.withValues(alpha: 0.6),
@@ -340,7 +340,7 @@ class _CartItemCard extends StatelessWidget {
                       ),
                       // Subtotal
                       Text(
-                        formatPrice(item.subtotal),
+                        formatPrice(item.price * item.quantity),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
