@@ -157,7 +157,6 @@ class _CartPageState extends State<CartPage> {
   }
 }
 
-// ── Empty Cart View ────────────────────────────────────────
 class _EmptyCartView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -202,7 +201,6 @@ class _EmptyCartView extends StatelessWidget {
   }
 }
 
-// ── Cart Item Card ─────────────────────────────────────────
 class _CartItemCard extends StatelessWidget {
   final CartItemModel item;
   final String Function(double) formatPrice;

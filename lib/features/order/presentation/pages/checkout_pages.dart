@@ -7,18 +7,17 @@ import 'package:uts_catalog_helm/features/order/presentation/providers/order_pro
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
 
-
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
 }
 
-
 class _CheckoutPageState extends State<CheckoutPage> {
   final _formKey = GlobalKey<FormState>();
+
   final _addressCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
-  String? _selectedPaymentMethod;
 
+  String? _selectedPaymentMethod;
 
   static const List<_PaymentOption> _paymentOptions = [
     _PaymentOption(
@@ -28,6 +27,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       icon: Icons.account_balance_wallet,
       iconColor: Color(0xFF00ADB5),
     ),
+
     _PaymentOption(
       value: 'bank_transfer',
       label: 'Transfer Bank',
@@ -35,6 +35,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       icon: Icons.account_balance,
       iconColor: Color(0xFF1565C0),
     ),
+
     _PaymentOption(
       value: 'virtual_account',
       label: 'Virtual Account',
@@ -44,7 +45,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     ),
   ];
 
-
   @override
   void dispose() {
     _addressCtrl.dispose();
@@ -52,22 +52,28 @@ class _CheckoutPageState extends State<CheckoutPage> {
     super.dispose();
   }
 
-
   String _formatPrice(double price) {
     final str = price.toInt().toString();
+
     final buffer = StringBuffer();
+
     int count = 0;
+
     for (int i = str.length - 1; i >= 0; i--) {
-      if (count > 0 && count % 3 == 0) buffer.write('.');
+      if (count > 0 && count % 3 == 0) {
+        buffer.write('.');
+      }
+
       buffer.write(str[i]);
       count++;
     }
+
     return 'Rp. ${buffer.toString().split('').reversed.join()}';
   }
 
-
   Future<void> _placeOrder(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
+
     if (_selectedPaymentMethod == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -75,21 +81,19 @@ class _CheckoutPageState extends State<CheckoutPage> {
           backgroundColor: Colors.red,
         ),
       );
+
       return;
     }
-
 
     final orderProv = context.read<OrderProvider>();
     final cartProv = context.read<CartProvider>();
 
-
-    // Show loading overlay
+    // loading
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
-
 
     final success = await orderProv.checkout(
       shippingAddress: _addressCtrl.text.trim(),
@@ -97,24 +101,22 @@ class _CheckoutPageState extends State<CheckoutPage> {
       paymentMethod: _selectedPaymentMethod!,
     );
 
-
     if (!context.mounted) return;
-    Navigator.pop(context); // dismiss loading
 
+    Navigator.pop(context);
 
     if (success) {
       await cartProv.clearCart();
+
       if (!context.mounted) return;
 
-
       final order = orderProv.lastOrder!;
+
       final needsPaymentFlow =
           order.paymentMethod == 'virtual_account' ||
           order.paymentMethod == 'gopay';
 
-
       if (needsPaymentFlow) {
-        // VA & GoPay: tampilkan halaman proses pembayaran
         Navigator.pushNamedAndRemoveUntil(
           context,
           AppRouter.paymentPending,
@@ -122,7 +124,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           arguments: order,
         );
       } else {
-        // Bank Transfer & lainnya: langsung ke halaman sukses
         Navigator.pushNamedAndRemoveUntil(
           context,
           AppRouter.orderSuccess,
@@ -140,32 +141,41 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final cartProv = context.watch<CartProvider>();
-    final cart = cartProv.cart;
-    final onSurface = Theme.of(context).colorScheme.onSurface;
-    final surface = Theme.of(context).colorScheme.surface;
-    final primary = Theme.of(context).colorScheme.primary;
 
+    final cart = cartProv.cart;
+
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
+    final surface = Theme.of(context).colorScheme.surface;
+
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Checkout')),
+
       body: Form(
         key: _formKey,
+
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
-              // ── 1. Ringkasan Pesanan ───────────────────────
+              // ── Ringkasan Pesanan ─────────────────────
               _SectionTitle(title: 'Ringkasan Pesanan'),
+
               const SizedBox(height: 8),
+
               Container(
                 decoration: BoxDecoration(
                   color: surface,
                   borderRadius: BorderRadius.circular(12),
+
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),
@@ -174,6 +184,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     ),
                   ],
                 ),
+
                 child: Column(
                   children: [
                     if (cart != null) ...[
@@ -183,23 +194,28 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             horizontal: 16,
                             vertical: 10,
                           ),
+
                           child: Row(
                             children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+
                                   children: [
                                     Text(
-                                      item.product.name,
+                                      item.name,
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: onSurface,
                                       ),
                                     ),
+
                                     const SizedBox(height: 2),
+
                                     Text(
-                                      '${item.quantity} x ${_formatPrice(item.product.price)}',
+                                      '${item.quantity} x ${_formatPrice(item.price.toDouble())}',
+
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: onSurface.withValues(alpha: 0.5),
@@ -208,8 +224,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                   ],
                                 ),
                               ),
+
                               Text(
-                                _formatPrice(item.subtotal),
+                                _formatPrice(
+                                  (item.price * item.quantity).toDouble(),
+                                ),
+
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -220,12 +240,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ),
                         ),
                       ),
+
                       const Divider(height: 1),
                     ],
+
                     Padding(
                       padding: const EdgeInsets.all(16),
+
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                         children: [
                           const Text(
                             'Total',
@@ -234,8 +258,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+
                           Text(
-                            _formatPrice(cart?.total ?? 0),
+                            _formatPrice((cart?.total ?? 0).toDouble()),
+
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -249,95 +275,108 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               ),
 
-
               const SizedBox(height: 24),
 
-
-              // ── 2. Alamat Pengiriman ───────────────────────
+              // ── Alamat Pengiriman ─────────────────────
               _SectionTitle(title: 'Alamat Pengiriman'),
+
               const SizedBox(height: 8),
+
               TextFormField(
                 controller: _addressCtrl,
                 maxLines: 3,
+
                 decoration: InputDecoration(
                   hintText: 'Masukkan alamat lengkap pengiriman...',
+
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+
                   filled: true,
                   fillColor: surface,
                 ),
+
                 validator: (val) {
                   if (val == null || val.trim().isEmpty) {
                     return 'Alamat pengiriman wajib diisi';
                   }
+
                   return null;
                 },
               ),
 
-
               const SizedBox(height: 24),
 
-
-              // ── 3. Catatan ─────────────────────────────────
+              // ── Catatan ───────────────────────────────
               _SectionTitle(title: 'Catatan (opsional)'),
+
               const SizedBox(height: 8),
+
               TextFormField(
                 controller: _notesCtrl,
                 maxLines: 2,
+
                 decoration: InputDecoration(
                   hintText: 'Tambahkan catatan untuk penjual...',
+
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+
                   filled: true,
                   fillColor: surface,
                 ),
               ),
 
-
               const SizedBox(height: 24),
 
-
-              // ── 4. Metode Pembayaran ───────────────────────
+              // ── Payment Method ───────────────────────
               _SectionTitle(title: 'Metode Pembayaran'),
+
               const SizedBox(height: 8),
+
               ..._paymentOptions.map(
                 (option) => _PaymentOptionCard(
                   option: option,
+
                   isSelected: _selectedPaymentMethod == option.value,
-                  onSelect: () =>
-                      setState(() => _selectedPaymentMethod = option.value),
+
+                  onSelect: () {
+                    setState(() {
+                      _selectedPaymentMethod = option.value;
+                    });
+                  },
                 ),
               ),
 
-
               const SizedBox(height: 32),
 
-
-              // ── 5. Tombol Place Order ──────────────────────
+              // ── Button Checkout ──────────────────────
               SizedBox(
                 width: double.infinity,
+
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primary,
                     foregroundColor: Colors.white,
+
                     padding: const EdgeInsets.symmetric(vertical: 16),
+
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+
                   onPressed: () => _placeOrder(context),
+
                   child: const Text(
                     'Place Order',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-
 
               const SizedBox(height: 24),
             ],
@@ -348,35 +387,33 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 }
 
+// ── SECTION TITLE ─────────────────────────────────────────
 
-// ── Section Title ──────────────────────────────────────────
 class _SectionTitle extends StatelessWidget {
   final String title;
 
-
   const _SectionTitle({required this.title});
-
 
   @override
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 }
 
+// ── PAYMENT OPTION ────────────────────────────────────────
 
-// ── Payment Option Card ────────────────────────────────────
 class _PaymentOption {
   final String value;
   final String label;
   final String subtitle;
   final IconData icon;
   final Color iconColor;
-
 
   const _PaymentOption({
     required this.value,
@@ -387,12 +424,10 @@ class _PaymentOption {
   });
 }
 
-
 class _PaymentOptionCard extends StatelessWidget {
   final _PaymentOption option;
   final bool isSelected;
   final VoidCallback onSelect;
-
 
   const _PaymentOptionCard({
     required this.option,
@@ -400,26 +435,32 @@ class _PaymentOptionCard extends StatelessWidget {
     required this.onSelect,
   });
 
-
   @override
   Widget build(BuildContext context) {
     final surface = Theme.of(context).colorScheme.surface;
-    final primary = Theme.of(context).colorScheme.primary;
-    final onSurface = Theme.of(context).colorScheme.onSurface;
 
+    final primary = Theme.of(context).colorScheme.primary;
+
+    final onSurface = Theme.of(context).colorScheme.onSurface;
 
     return GestureDetector(
       onTap: onSelect,
+
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
+
         margin: const EdgeInsets.only(bottom: 10),
+
         decoration: BoxDecoration(
           color: surface,
+
           borderRadius: BorderRadius.circular(12),
+
           border: Border.all(
             color: isSelected ? primary : Colors.transparent,
             width: 2,
           ),
+
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -428,34 +469,45 @@ class _PaymentOptionCard extends StatelessWidget {
             ),
           ],
         ),
+
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+
           child: Row(
             children: [
               Container(
                 width: 40,
                 height: 40,
+
                 decoration: BoxDecoration(
                   color: option.iconColor.withValues(alpha: 0.1),
+
                   borderRadius: BorderRadius.circular(10),
                 ),
+
                 child: Icon(option.icon, color: option.iconColor, size: 22),
               ),
+
               const SizedBox(width: 12),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+
                   children: [
                     Text(
                       option.label,
+
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: onSurface,
                       ),
                     ),
+
                     Text(
                       option.subtitle,
+
                       style: TextStyle(
                         fontSize: 12,
                         color: onSurface.withValues(alpha: 0.5),
@@ -464,21 +516,28 @@ class _PaymentOptionCard extends StatelessWidget {
                   ],
                 ),
               ),
+
               Container(
                 width: 20,
                 height: 20,
+
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+
                   border: Border.all(
-                    color: isSelected ? primary : onSurface.withValues(alpha: 0.3),
+                    color: isSelected
+                        ? primary
+                        : onSurface.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
+
                 child: isSelected
                     ? Center(
                         child: Container(
                           width: 10,
                           height: 10,
+
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: primary,
