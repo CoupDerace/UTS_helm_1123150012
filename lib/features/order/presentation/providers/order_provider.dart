@@ -4,6 +4,7 @@ import 'package:uts_catalog_helm/features/order/data/repositories/order_reposito
 import 'package:uts_catalog_helm/features/order/domain/repositories/order_repository.dart';
 
 enum PaymentCheckStatus { idle, checking, paid, failed }
+
 enum OrderStatus { initial, loading, success, error }
 
 class OrderProvider extends ChangeNotifier {
@@ -43,6 +44,21 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchMyOrders() async {
+    _checkoutStatus = OrderStatus.loading;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _orders = await _repository.getMyOrders();
+
+      _checkoutStatus = OrderStatus.success;
+      notifyListeners();
+    } catch (e) {
+      _setError(e.toString());
+    }
+  }
+
   void _setLoading() {
     _checkoutStatus = OrderStatus.loading;
     _error = null;
@@ -55,5 +71,21 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void checkPaymentStatus(int id) {}
+  PaymentCheckStatus _paymentCheckStatus = PaymentCheckStatus.idle;
+
+  PaymentCheckStatus get paymentCheckStatus => _paymentCheckStatus;
+
+  void startPaymentPolling(int orderId) {}
+
+  void stopPaymentPolling() {}
+
+  Future<void> checkPaymentStatus(int id) async {
+    _paymentCheckStatus = PaymentCheckStatus.checking;
+    notifyListeners();
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    _paymentCheckStatus = PaymentCheckStatus.idle;
+    notifyListeners();
+  }
 }
