@@ -3,6 +3,7 @@ import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
 import 'package:uts_catalog_helm/features/order/data/repositories/order_repository_impl.dart';
 import 'package:uts_catalog_helm/features/order/domain/repositories/order_repository.dart';
 
+enum PaymentCheckStatus { idle, checking, paid, failed }
 enum OrderStatus { initial, loading, success, error }
 
 class OrderProvider extends ChangeNotifier {
@@ -53,4 +54,6 @@ class OrderProvider extends ChangeNotifier {
     _checkoutStatus = OrderStatus.error;
     notifyListeners();
   }
+
+  void checkPaymentStatus(int id) {}
 }

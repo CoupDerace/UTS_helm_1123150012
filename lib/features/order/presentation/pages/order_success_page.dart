@@ -171,7 +171,7 @@ class OrderSuccessPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(
                       context,
-                      AppRouter.MyOrder,
+                      AppRouter.myOrders,
                     );
                   },
                 ),
