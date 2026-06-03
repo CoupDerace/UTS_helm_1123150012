@@ -70,8 +70,13 @@ class OrderModel {
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
-    final items = (json['items'] as List<dynamic>? ?? [])
-        .map((e) => OrderItemModel.fromJson(e))
+    final rawItems = json['items'] as List<dynamic>? ?? [];
+
+    final items = rawItems
+        .where((e) => e != null)
+        .map(
+          (e) => OrderItemModel.fromJson(Map<String, dynamic>.from(e as Map)),
+        )
         .toList();
 
     return OrderModel(
@@ -81,7 +86,6 @@ class OrderModel {
       shippingAddress: json['shipping_address'] as String? ?? '',
       notes: json['notes'] as String? ?? '',
       paymentMethod: json['payment_method'] as String? ?? '',
-      // TAMBAHKAN
       gopayDeeplink: json['gopay_deeplink'] as String?,
       vaNumber: json['va_number'] as String?,
       items: items,
