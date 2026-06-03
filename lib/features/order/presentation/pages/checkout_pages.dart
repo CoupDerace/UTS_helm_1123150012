@@ -68,7 +68,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       count++;
     }
 
-    return 'Rp. ${buffer.toString().split('').reversed.join()}';
+    return ' ${buffer.toString().split('').reversed.join()}';
   }
 
   Future<void> _placeOrder(BuildContext context) async {
@@ -252,7 +252,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
                         children: [
                           const Text(
-                            'Total',
+                            'Total Item',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
