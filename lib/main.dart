@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uts_catalog_helm/core/providers/theme_provider.dart';
+import 'package:uts_catalog_helm/core/services/helm_pay_service.dart';
+import 'package:uts_catalog_helm/core/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:uts_catalog_helm/features/cart/presentation/pages/cart_pages.dart';
@@ -17,6 +19,8 @@ void main() async {
 
   // Inisialisasi Firebase SEBELUM runApp
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService.initialize();
+  await GlobalInstitutePayService().init();
 
   runApp(
     MultiProvider(
