@@ -1,83 +1,108 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:uts_catalog_helm/core/services/global_institute_pay_service.dart';
 import 'package:provider/provider.dart';
 import 'package:uts_catalog_helm/core/routes/app_router.dart';
 import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
 import 'package:uts_catalog_helm/features/order/presentation/providers/order_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 class PaymentPendingPage extends StatefulWidget {
   final OrderModel order;
 
-
   const PaymentPendingPage({super.key, required this.order});
-
 
   @override
   State<PaymentPendingPage> createState() => _PaymentPendingPageState();
 }
 
-
 class _PaymentPendingPageState extends State<PaymentPendingPage>
     with WidgetsBindingObserver {
-  bool _gopayLaunched = false;
-
+  bool _payLaunched = false; // ← Generic nama
+  StreamSubscription<PaymentCallbackData>? _callbackSub;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-
-    // Untuk GoPay: otomatis buka deeplink saat halaman pertama dimuat
-    if (widget.order.paymentMethod == 'gopay') {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _launchGopay());
+    // 1. Auto-launch Dompet Kampus Global
+    if (widget.order.paymentMethod == 'global_institute_pay') {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _launchGlobalInstitutePay(),
+      );
     }
 
+    // 2. Polling backend (tetap berjalan sebagai fallback)
+    context.read<OrderProvider>().startPaymentPolling(widget.order.id);
 
-    // Mulai polling otomatis untuk kedua metode
-    final orderProv = context.read<OrderProvider>();
-    orderProv.startPaymentPolling(widget.order.id);
+    // 3. Tangani cold start callback
+    final pending = GlobalInstitutePayService().consumePendingCallback();
+    if (pending != null && pending.isSuccess) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _onPaymentSuccess());
+    }
+
+    // 4. Subscribe stream callback (app sedang berjalan)
+    _callbackSub = GlobalInstitutePayService().onCallback.listen((data) {
+      if (!mounted) return;
+      if (data.isSuccess) {
+        _onPaymentSuccess();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Pembayaran gagal (status: ${data.status})'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
   }
-
 
   @override
   void dispose() {
+    _callbackSub?.cancel(); // ← WAJIB: batalkan subscription saat page ditutup
     WidgetsBinding.instance.removeObserver(this);
     context.read<OrderProvider>().stopPaymentPolling();
     super.dispose();
   }
 
-
-  /// Dipanggil setiap kali app kembali ke foreground (setelah dari GoPay)
+  /// Dipanggil setiap kali app kembali ke foreground (setelah dari Dompet)
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _gopayLaunched) {
-      // Cek status sekali saat balik dari GoPay
+    if (state == AppLifecycleState.resumed && _payLaunched) {
+      // User baru kembali dari Dompet Kampus Global → cek status backend
       context.read<OrderProvider>().checkPaymentStatus(widget.order.id);
     }
   }
 
+  Future<void> _launchGlobalInstitutePay() async {
+    // Ambil deskripsi dari notes order (jika ada)
+    final notes = widget.order.notes.isNotEmpty ? widget.order.notes : null;
 
-  Future<void> _launchGopay() async {
-    final deeplink = widget.order.gopayDeeplink;
-    if (deeplink == null || deeplink.isEmpty) return;
+    // Generate URL deeplink (dilakukan di sisi client, bukan dari backend)
+    final deeplinkUrl = GlobalInstitutePayService.buildDeeplinkUrl(
+      orderId: widget.order.id,
+      amount: widget.order.totalAmount,
+      description: notes,
+    );
 
+    final uri = Uri.parse(deeplinkUrl);
 
-    final uri = Uri.parse(deeplink);
+    // Cek apakah aplikasi Dompet Kampus Global terpasang
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-      setState(() => _gopayLaunched = true);
+      setState(() => _payLaunched = true); // ← Update UI langkah 1 ✓
     } else {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Aplikasi GoPay tidak ditemukan di perangkat ini'),
+          content: Text('Aplikasi Dompet Kampus Global tidak ditemukan'),
           backgroundColor: Colors.red,
         ),
       );
     }
   }
-
 
   String _formatPrice(double price) {
     final str = price.toInt().toString();
@@ -91,7 +116,6 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     return 'Rp. ${buffer.toString().split('').reversed.join()}';
   }
 
-
   void _onPaymentSuccess() {
     context.read<OrderProvider>().stopPaymentPolling();
     Navigator.pushNamedAndRemoveUntil(
@@ -102,19 +126,16 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final orderProv = context.watch<OrderProvider>();
     final payStatus = orderProv.paymentCheckStatus;
     final order = orderProv.lastOrder ?? widget.order;
 
-
     // Jika sudah terbayar, navigasi ke halaman sukses
     if (payStatus == PaymentCheckStatus.paid) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _onPaymentSuccess());
     }
-
 
     return PopScope(
       // Cegah tombol back saat pembayaran masih pending agar tidak bisa skip
@@ -138,19 +159,18 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
                 onCheckStatus: () =>
                     context.read<OrderProvider>().checkPaymentStatus(order.id),
               )
-            : _GopayBody(
+            : _GlobalInstitutePayBody(
                 order: order,
                 payStatus: payStatus,
                 formatPrice: _formatPrice,
-                gopayLaunched: _gopayLaunched,
-                onOpenGopay: _launchGopay,
+                payLaunched: _payLaunched,
+                onOpenApp: _launchGlobalInstitutePay,
                 onCheckStatus: () =>
                     context.read<OrderProvider>().checkPaymentStatus(order.id),
               ),
       ),
     );
   }
-
 
   void _showCancelConfirmation() {
     showDialog(
@@ -176,9 +196,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
             },
             child: Text(
               'Bayar Nanti',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
         ],
@@ -187,18 +205,15 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
   }
 }
 
-
 // ──────────────────────────────────────────────────────────────
 // Virtual Account Body
 // ──────────────────────────────────────────────────────────────
-
 
 class _VirtualAccountBody extends StatelessWidget {
   final OrderModel order;
   final PaymentCheckStatus payStatus;
   final String Function(double) formatPrice;
   final VoidCallback onCheckStatus;
-
 
   const _VirtualAccountBody({
     required this.order,
@@ -207,7 +222,6 @@ class _VirtualAccountBody extends StatelessWidget {
     required this.onCheckStatus,
   });
 
-
   static const List<_BankInfo> _banks = [
     _BankInfo('BCA', '888', Color(0xFF003087)),
     _BankInfo('Mandiri', '888', Color(0xFF003087)),
@@ -215,14 +229,12 @@ class _VirtualAccountBody extends StatelessWidget {
     _BankInfo('BRI', '889', Color(0xFF00529B)),
   ];
 
-
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
     final surface = Theme.of(context).colorScheme.surface;
     final onSurface = Theme.of(context).colorScheme.onSurface;
     final vaNumber = order.vaNumber ?? '-';
-
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -251,9 +263,9 @@ class _VirtualAccountBody extends StatelessWidget {
               'Selesaikan Pembayaran via Virtual Account',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: onSurface,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: onSurface,
+              ),
             ),
           ),
           const SizedBox(height: 6),
@@ -268,9 +280,7 @@ class _VirtualAccountBody extends StatelessWidget {
             ),
           ),
 
-
           const SizedBox(height: 24),
-
 
           // ── Nomor VA ────────────────────────────────────────
           _SectionLabel(label: 'Nomor Virtual Account'),
@@ -320,9 +330,7 @@ class _VirtualAccountBody extends StatelessWidget {
             ),
           ),
 
-
           const SizedBox(height: 20),
-
 
           // ── Total Pembayaran ─────────────────────────────────
           Container(
@@ -351,9 +359,7 @@ class _VirtualAccountBody extends StatelessWidget {
             ),
           ),
 
-
           const SizedBox(height: 24),
-
 
           // ── Cara Bayar ─────────────────────────────────────
           _SectionLabel(label: 'Cara Pembayaran'),
@@ -380,19 +386,12 @@ class _VirtualAccountBody extends StatelessWidget {
             ),
           ),
 
-
           const SizedBox(height: 28),
 
-
           // ── Cek Status ─────────────────────────────────────
-          _CheckStatusButton(
-            payStatus: payStatus,
-            onPressed: onCheckStatus,
-          ),
-
+          _CheckStatusButton(payStatus: payStatus, onPressed: onCheckStatus),
 
           const SizedBox(height: 16),
-
 
           // Status belum bayar
           if (payStatus == PaymentCheckStatus.idle) ...[
@@ -407,7 +406,6 @@ class _VirtualAccountBody extends StatelessWidget {
             ),
           ],
 
-
           const SizedBox(height: 32),
         ],
       ),
@@ -415,24 +413,19 @@ class _VirtualAccountBody extends StatelessWidget {
   }
 }
 
-
 class _BankInfo {
   final String name;
   final String prefix;
   final Color color;
 
-
   const _BankInfo(this.name, this.prefix, this.color);
 }
-
 
 class _BankStepTile extends StatelessWidget {
   final _BankInfo bank;
   final String vaNumber;
 
-
   const _BankStepTile({required this.bank, required this.vaNumber});
-
 
   @override
   Widget build(BuildContext context) {
@@ -472,30 +465,26 @@ class _BankStepTile extends StatelessWidget {
   }
 }
 
-
 // ──────────────────────────────────────────────────────────────
-// GoPay Body
+// Dompet Body
 // ──────────────────────────────────────────────────────────────
 
-
-class _GopayBody extends StatelessWidget {
+class _GlobalInstitutePayBody extends StatelessWidget {
   final OrderModel order;
   final PaymentCheckStatus payStatus;
   final String Function(double) formatPrice;
-  final bool gopayLaunched;
-  final VoidCallback onOpenGopay;
+  final bool payLaunched;
+  final VoidCallback onOpenApp;
   final VoidCallback onCheckStatus;
 
-
-  const _GopayBody({
+  const _GlobalInstitutePayBody({
     required this.order,
     required this.payStatus,
     required this.formatPrice,
-    required this.gopayLaunched,
-    required this.onOpenGopay,
+    required this.payLaunched,
+    required this.onOpenApp,
     required this.onCheckStatus,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -503,13 +492,11 @@ class _GopayBody extends StatelessWidget {
     final surface = Theme.of(context).colorScheme.surface;
     final onSurface = Theme.of(context).colorScheme.onSurface;
 
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           const SizedBox(height: 12),
-
 
           // ── Header icon ─────────────────────────────────────
           Container(
@@ -527,11 +514,11 @@ class _GopayBody extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Bayar dengan GoPay',
+            'Bayar dengan Dompet Global',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: onSurface,
-                ),
+              fontWeight: FontWeight.bold,
+              color: onSurface,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -543,9 +530,7 @@ class _GopayBody extends StatelessWidget {
             ),
           ),
 
-
           const SizedBox(height: 28),
-
 
           // ── Info card ────────────────────────────────────────
           Container(
@@ -567,15 +552,16 @@ class _GopayBody extends StatelessWidget {
               children: [
                 _StepItem(
                   number: '1',
-                  text: gopayLaunched
-                      ? 'Aplikasi GoPay sudah dibuka'
-                      : 'Kamu akan diarahkan ke aplikasi GoPay',
-                  done: gopayLaunched,
+                  text: payLaunched
+                      ? 'Aplikasi Dompet sudah dibuka'
+                      : 'Kamu akan diarahkan ke aplikasi Dompet',
+                  done: payLaunched,
                 ),
                 const SizedBox(height: 14),
                 _StepItem(
                   number: '2',
-                  text: 'Konfirmasi pembayaran ${formatPrice(order.totalAmount)} di GoPay',
+                  text:
+                      'Konfirmasi pembayaran ${formatPrice(order.totalAmount)} di Dompet',
                   done: false,
                 ),
                 const SizedBox(height: 14),
@@ -588,11 +574,9 @@ class _GopayBody extends StatelessWidget {
             ),
           ),
 
-
           const SizedBox(height: 28),
 
-
-          // ── Tombol buka GoPay ───────────────────────────────
+          // ── Tombol buka Dompet ───────────────────────────────
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -606,40 +590,32 @@ class _GopayBody extends StatelessWidget {
               ),
               icon: const Icon(Icons.open_in_new),
               label: Text(
-                gopayLaunched ? 'Buka Kembali GoPay' : 'Buka GoPay',
+                payLaunched ? 'Buka Kembali Dompet' : 'Buka Dompet',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              onPressed: onOpenGopay,
+              onPressed: onOpenApp,
             ),
           ),
 
-
           const SizedBox(height: 12),
 
-
           // ── Cek Status Manual ───────────────────────────────
-          _CheckStatusButton(
-            payStatus: payStatus,
-            onPressed: onCheckStatus,
-          ),
-
+          _CheckStatusButton(payStatus: payStatus, onPressed: onCheckStatus),
 
           const SizedBox(height: 16),
 
-
-          if (payStatus == PaymentCheckStatus.idle && gopayLaunched)
+          if (payStatus == PaymentCheckStatus.idle && payLaunched)
             Text(
-              'Sedang menunggu konfirmasi pembayaran dari GoPay...',
+              'Sedang menunggu konfirmasi pembayaran dari Dompet...',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
                 color: onSurface.withValues(alpha: 0.5),
               ),
             ),
-
 
           const SizedBox(height: 32),
         ],
@@ -648,19 +624,16 @@ class _GopayBody extends StatelessWidget {
   }
 }
 
-
 class _StepItem extends StatelessWidget {
   final String number;
   final String text;
   final bool done;
-
 
   const _StepItem({
     required this.number,
     required this.text,
     required this.done,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -694,10 +667,7 @@ class _StepItem extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              text,
-              style: TextStyle(fontSize: 14, color: onSurface),
-            ),
+            child: Text(text, style: TextStyle(fontSize: 14, color: onSurface)),
           ),
         ),
       ],
@@ -705,41 +675,31 @@ class _StepItem extends StatelessWidget {
   }
 }
 
-
 // ──────────────────────────────────────────────────────────────
 // Shared Widgets
 // ──────────────────────────────────────────────────────────────
 
-
 class _SectionLabel extends StatelessWidget {
   final String label;
 
-
   const _SectionLabel({required this.label});
-
 
   @override
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 }
-
 
 class _CheckStatusButton extends StatelessWidget {
   final PaymentCheckStatus payStatus;
   final VoidCallback onPressed;
 
-
-  const _CheckStatusButton({
-    required this.payStatus,
-    required this.onPressed,
-  });
-
+  const _CheckStatusButton({required this.payStatus, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -752,9 +712,7 @@ class _CheckStatusButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.primary),
           foregroundColor: Theme.of(context).colorScheme.primary,
         ),
         icon: isChecking
@@ -776,5 +734,3 @@ class _CheckStatusButton extends StatelessWidget {
     );
   }
 }
-
-

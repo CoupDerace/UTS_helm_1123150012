@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uts_catalog_helm/core/providers/theme_provider.dart';
-import 'package:uts_catalog_helm/core/services/helm_pay_service.dart';
+import 'package:uts_catalog_helm/core/services/global_institute_pay_service.dart';
 import 'package:uts_catalog_helm/core/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
