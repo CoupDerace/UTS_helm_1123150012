@@ -21,9 +21,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   static const List<_PaymentOption> _paymentOptions = [
     _PaymentOption(
-      value: 'gopay',
-      label: 'GoPay',
-      subtitle: 'Bayar instant dengan GoPay',
+      value: 'global_institute_pay',
+      label: 'Global Institute Pay',
+      subtitle: 'Bayar instant dengan Dompet Kampus Global',
       icon: Icons.account_balance_wallet,
       iconColor: Color(0xFF00ADB5),
     ),
@@ -40,7 +40,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       value: 'virtual_account',
       label: 'Virtual Account',
       subtitle: 'Nomor VA otomatis digenerate',
-      icon: Icons.credit_card,
+      icon: Icons.school_rounded,
       iconColor: Color(0xFFE65100),
     ),
   ];
