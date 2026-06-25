@@ -114,7 +114,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
       final needsPaymentFlow =
           order.paymentMethod == 'virtual_account' ||
-          order.paymentMethod == 'gopay';
+          order.paymentMethod == 'global_institute_pay';
 
       if (needsPaymentFlow) {
         Navigator.pushNamedAndRemoveUntil(
