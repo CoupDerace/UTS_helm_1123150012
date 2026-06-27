@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
 import 'package:uts_catalog_helm/features/order/data/repositories/order_repository_impl.dart';
@@ -71,21 +73,56 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  PaymentCheckStatus _paymentCheckStatus = PaymentCheckStatus.idle;
+  // ── Payment polling ───────────────────────────────────────────
 
+  PaymentCheckStatus _paymentCheckStatus = PaymentCheckStatus.idle;
   PaymentCheckStatus get paymentCheckStatus => _paymentCheckStatus;
 
-  void startPaymentPolling(int orderId) {}
+  Timer? _pollingTimer;
 
-  void stopPaymentPolling() {}
+  /// Mulai polling backend setiap 5 detik untuk memeriksa status pembayaran.
+  void startPaymentPolling(int orderId) {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      if (_paymentCheckStatus == PaymentCheckStatus.paid) {
+        stopPaymentPolling();
+        return;
+      }
+      await checkPaymentStatus(orderId);
+    });
+  }
 
+  void stopPaymentPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = null;
+  }
+
+  /// Cek status pembayaran dari backend.
+  /// Jika order sudah bukan 'pending', set status ke [PaymentCheckStatus.paid].
   Future<void> checkPaymentStatus(int id) async {
+    if (_paymentCheckStatus == PaymentCheckStatus.checking) return;
+
     _paymentCheckStatus = PaymentCheckStatus.checking;
     notifyListeners();
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final updatedOrder = await _repository.getOrderDetail(id);
 
-    _paymentCheckStatus = PaymentCheckStatus.idle;
+      // Update lastOrder agar Order #N tampil dengan ID yang benar
+      _lastOrder = updatedOrder;
+
+      // Status selain 'pending' berarti pembayaran sudah dikonfirmasi
+      if (updatedOrder.status != 'pending') {
+        _paymentCheckStatus = PaymentCheckStatus.paid;
+        stopPaymentPolling();
+      } else {
+        _paymentCheckStatus = PaymentCheckStatus.idle;
+      }
+    } catch (e) {
+      debugPrint('[OrderProvider] checkPaymentStatus error: $e');
+      _paymentCheckStatus = PaymentCheckStatus.idle;
+    }
+
     notifyListeners();
   }
 }
