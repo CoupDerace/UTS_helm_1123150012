@@ -28,9 +28,12 @@ class OrderSuccessPage extends StatelessWidget {
       case 'gopay':
         return 'GoPay';
       case 'bank_transfer':
+      case 'transfer_bank':
         return 'Transfer Bank';
       case 'virtual_account':
         return 'Virtual Account';
+      case 'global_institute_pay':
+        return 'Global Institute Pay';
       default:
         return method;
     }

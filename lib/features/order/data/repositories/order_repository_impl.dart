@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:uts_catalog_helm/core/constants/api_constant.dart';
 import 'package:uts_catalog_helm/core/services/dio_client.dart';
 import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
@@ -19,11 +20,17 @@ class OrderRepositoryImpl implements OrderRepository {
       },
     );
 
-    final data = response.data['data'];
+    // DEBUG: lihat raw response dari backend
+    debugPrint('[OrderRepo] checkout raw response: ${response.data}');
+
+    final responseBody = response.data;
+    // Coba ambil dari 'data', kalau null coba langsung dari root
+    final data = responseBody['data'] ?? responseBody['order'] ?? responseBody;
     if (data == null) {
       throw Exception('Checkout gagal: data kosong');
     }
 
+    debugPrint('[OrderRepo] checkout data field: $data');
     return OrderModel.fromJson(data as Map<String, dynamic>);
   }
 
@@ -46,12 +53,18 @@ class OrderRepositoryImpl implements OrderRepository {
     final response = await DioClient.instance.get(
       '${ApiConstant.orders}/$orderId',
     );
-    final data = response.data['data'];
+
+    // DEBUG: lihat raw response
+    debugPrint('[OrderRepo] getOrderDetail raw response: ${response.data}');
+
+    final responseBody = response.data;
+    final data = responseBody['data'] ?? responseBody['order'] ?? responseBody;
 
     if (data == null) {
       throw Exception('Order tidak ditemukan');
     }
 
+    debugPrint('[OrderRepo] getOrderDetail data field: $data');
     return OrderModel.fromJson(data as Map<String, dynamic>);
   }
 }

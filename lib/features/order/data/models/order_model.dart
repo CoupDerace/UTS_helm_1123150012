@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class OrderItemModel {
   final int productId;
   final String productName;
@@ -14,15 +16,22 @@ class OrderItemModel {
   });
 
   factory OrderItemModel.fromJson(Map<String, dynamic> json) {
+    debugPrint('[OrderItemModel] parsing item: $json');
     final price = (json['price'] as num?)?.toDouble() ?? 0.0;
     final quantity = json['quantity'] as int? ?? 0;
 
     return OrderItemModel(
-      productId: json['product_id'] as int? ?? 0,
-      productName: json['product_name'] as String? ?? '',
+      productId:
+          json['product_id'] as int? ?? json['id'] as int? ?? 0,
+      productName:
+          json['product_name'] as String? ??
+          json['name'] as String? ??
+          json['title'] as String? ??
+          '',
       price: price,
       quantity: quantity,
-      subtotal: (json['subtotal'] as num?)?.toDouble() ?? (price * quantity),
+      subtotal:
+          (json['subtotal'] as num?)?.toDouble() ?? (price * quantity),
     );
   }
 
@@ -47,7 +56,7 @@ class OrderModel {
   final String notes;
 
   final String paymentMethod;
-  // gopay | bank_transfer | virtual_account
+  // gopay | bank_transfer | transfer_bank | virtual_account | global_institute_pay
 
   final String? gopayDeeplink;
   final String? vaNumber;
@@ -70,6 +79,8 @@ class OrderModel {
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
+    debugPrint('[OrderModel] parsing order: $json');
+
     final rawItems = json['items'] as List<dynamic>? ?? [];
 
     final items = rawItems
@@ -79,13 +90,37 @@ class OrderModel {
         )
         .toList();
 
+    // Handle berbagai kemungkinan nama field total dari backend
+    final totalAmount =
+        (json['total_amount'] as num?)?.toDouble() ??
+        (json['total'] as num?)?.toDouble() ??
+        (json['grand_total'] as num?)?.toDouble() ??
+        // Kalau tidak ada field total, hitung dari items
+        items.fold<double>(0.0, (sum, item) => sum + item.subtotal);
+
+    // Handle berbagai kemungkinan nama field status
+    final status =
+        json['status'] as String? ??
+        json['payment_status'] as String? ??
+        json['order_status'] as String? ??
+        'pending';
+
+    // Handle berbagai kemungkinan nama field payment method
+    final paymentMethod =
+        json['payment_method'] as String? ??
+        json['method'] as String? ??
+        json['payment_type'] as String? ??
+        '';
+
+    debugPrint('[OrderModel] totalAmount=$totalAmount, status=$status, paymentMethod=$paymentMethod');
+
     return OrderModel(
       id: json['id'] as int? ?? 0,
-      totalAmount: (json['total_amount'] as num?)?.toDouble() ?? 0.0,
-      status: json['status'] as String? ?? 'pending',
+      totalAmount: totalAmount,
+      status: status,
       shippingAddress: json['shipping_address'] as String? ?? '',
       notes: json['notes'] as String? ?? '',
-      paymentMethod: json['payment_method'] as String? ?? '',
+      paymentMethod: paymentMethod,
       gopayDeeplink: json['gopay_deeplink'] as String?,
       vaNumber: json['va_number'] as String?,
       items: items,
