@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uts_catalog_helm/core/routes/app_router.dart';
 import 'package:uts_catalog_helm/features/cart/presentation/providers/cart_provider.dart';
+import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
 import 'package:uts_catalog_helm/features/order/presentation/providers/order_provider.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -88,6 +89,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final orderProv = context.read<OrderProvider>();
     final cartProv = context.read<CartProvider>();
 
+    // Simpan data cart SEBELUM di-clear (backend sering return total=0 & items=[])
+    final cartTotal = (cartProv.cart?.totalPrice ?? cartProv.cart?.total.toDouble() ?? 0.0);
+    final cartItems = (cartProv.cart?.items ?? []).map((ci) => OrderItemModel(
+      productId: ci.productId,
+      productName: ci.name,
+      price: ci.price,
+      quantity: ci.quantity,
+      subtotal: ci.price * ci.quantity,
+    )).toList();
+
     // loading
     showDialog(
       context: context,
@@ -110,7 +121,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
       if (!context.mounted) return;
 
-      final order = orderProv.lastOrder!;
+      var order = orderProv.lastOrder!;
+
+      // Patch order jika backend return total=0 atau items kosong
+      if (order.totalAmount == 0 && cartTotal > 0) {
+        order = order.copyWith(totalAmount: cartTotal);
+      }
+      if (order.items.isEmpty && cartItems.isNotEmpty) {
+        order = order.copyWith(items: cartItems);
+      }
 
       final needsPaymentFlow =
           order.paymentMethod == 'virtual_account' ||

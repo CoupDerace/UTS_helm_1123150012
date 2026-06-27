@@ -128,6 +128,32 @@ class OrderModel {
     );
   }
 
+  OrderModel copyWith({
+    int? id,
+    double? totalAmount,
+    String? status,
+    String? shippingAddress,
+    String? notes,
+    String? paymentMethod,
+    String? gopayDeeplink,
+    String? vaNumber,
+    List<OrderItemModel>? items,
+    String? createdAt,
+  }) {
+    return OrderModel(
+      id: id ?? this.id,
+      totalAmount: totalAmount ?? this.totalAmount,
+      status: status ?? this.status,
+      shippingAddress: shippingAddress ?? this.shippingAddress,
+      notes: notes ?? this.notes,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      gopayDeeplink: gopayDeeplink ?? this.gopayDeeplink,
+      vaNumber: vaNumber ?? this.vaNumber,
+      items: items ?? this.items,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
