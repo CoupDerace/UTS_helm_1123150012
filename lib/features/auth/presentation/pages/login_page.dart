@@ -5,11 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 
 import '../providers/auth_provider.dart';
 import '../../../../core/routes/app_router.dart';
-import '../widgets/auth_header.dart';
 import '../widgets/custom_text_field.dart';
-import '../widgets/custom_button.dart';
 import '../widgets/loading_overlay.dart';
-import '../widgets/divider_with_text.dart';
 import '../widgets/google_sign_in_button.dart';
 
 class LoginPage extends StatefulWidget {
@@ -102,135 +99,222 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final isLoading = context.watch<AuthProvider>().isLoading;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    final bgColors = isDark 
+        ? [const Color(0xFF2C2C2C), const Color(0xFF121212)]
+        : [const Color(0xFFE0E0E0), const Color(0xFFFFFFFF)];
+
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final buttonColor = isDark ? Theme.of(context).colorScheme.primary : Colors.black;
+    final buttonTextColor = isDark ? Colors.black : Colors.white;
 
     return LoadingOverlay(
       isLoading: isLoading,
       message: 'Masuk ke akun...',
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-
-                  const AuthHeader(
-                    icon: Icons.lock_open_outlined,
-                    title: 'The Helmets',
-                    subtitle: 'Masuk untuk belanja helm terbaik',
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Column(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: bgColors,
+            ),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    // Header with Back Button
+                    Row(
                       children: [
-                        CustomTextField(
-                          label: 'Email',
-                          hint: 'contoh@email.com',
-                          controller: _emailCtrl,
-                          keyboardType: TextInputType.emailAddress,
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          validator: (v) {
-                            if (v?.isEmpty ?? true) return 'Email wajib diisi';
-                            if (!EmailValidator.validate(v!)) {
-                              return 'Format email salah';
-                            }
-                            return null;
-                          },
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: textColor),
+                          onPressed: () => Navigator.pop(context),
                         ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Login',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                  color: textColor,
+                                ),
+                              ),
+                              Text(
+                                'The Helmets',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w900,
+                                  color: textColor,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 48), // Balance for center alignment
+                      ],
+                    ),
+                    const SizedBox(height: 50),
 
-                        const SizedBox(height: 16),
-
-                        CustomTextField(
-                          label: 'Password',
-                          hint: 'Masukkan password',
-                          controller: _passCtrl,
-                          obscureText: !_showPass,
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _showPass
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                    // Inputs
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Email', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+                        const SizedBox(height: 8),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: TextFormField(
+                            controller: _emailCtrl,
+                            keyboardType: TextInputType.emailAddress,
+                            style: TextStyle(color: textColor),
+                            decoration: InputDecoration(
+                              hintText: 'Masukkan Email Anda',
+                              hintStyle: TextStyle(color: textColor.withOpacity(0.5)),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                             ),
-                            onPressed: () =>
-                                setState(() => _showPass = !_showPass),
-                          ),
-                          validator: (v) =>
-                              (v?.isEmpty ?? true) ? 'Password wajib diisi' : null,
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () =>
-                                _showForgotPasswordDialog(context),
-                            child: const Text('Lupa Password?'),
+                            validator: (v) {
+                              if (v?.isEmpty ?? true) return 'Email wajib diisi';
+                              if (!EmailValidator.validate(v!)) return 'Format email salah';
+                              return null;
+                            },
                           ),
                         ),
+                        const SizedBox(height: 20),
 
+                        Text('Password', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                         const SizedBox(height: 8),
-
-                        CustomButton(
-                          label: 'Masuk',
-                          onPressed: _loginEmail,
-                          isLoading: isLoading,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: TextFormField(
+                            controller: _passCtrl,
+                            obscureText: !_showPass,
+                            style: TextStyle(color: textColor),
+                            decoration: InputDecoration(
+                              hintText: 'Masukkan Password Anda',
+                              hintStyle: TextStyle(color: textColor.withOpacity(0.5)),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            ),
+                            validator: (v) => (v?.isEmpty ?? true) ? 'Password wajib diisi' : null,
+                          ),
                         ),
                       ],
                     ),
-                  ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 12),
 
-                  const DividerWithText(text: 'atau masuk dengan'),
-
-                  const SizedBox(height: 20),
-
-                  GoogleSignInButton(
-                    onPressed: _loginGoogle,
-                    isLoading: isLoading,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Belum punya akun? '),
-                      GestureDetector(
-                        onTap: () => Navigator.pushReplacementNamed(
-                          context,
-                          AppRouter.register,
-                        ),
-                        child: const Text(
-                          'Daftar',
-                          style: TextStyle(
-                            color: Color(0xFF1565C0),
-                            fontWeight: FontWeight.bold,
+                    // Save Password Checkbox
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Checkbox(
+                            value: true, 
+                            onChanged: (val) {}, 
+                            activeColor: isDark ? Theme.of(context).colorScheme.primary : Colors.black,
+                            checkColor: isDark ? Colors.black : Colors.white,
                           ),
                         ),
+                        const SizedBox(width: 8),
+                        Text('Simpan Password', style: TextStyle(color: textColor)),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () => _showForgotPasswordDialog(context),
+                          child: Text('Lupa Password?', style: TextStyle(color: textColor.withOpacity(0.7))),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Login Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 55,
+                      child: ElevatedButton(
+                        onPressed: _loginEmail,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonColor,
+                          foregroundColor: buttonTextColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: isLoading 
+                            ? SizedBox(
+                                height: 24, width: 24, 
+                                child: CircularProgressIndicator(color: buttonTextColor, strokeWidth: 2)
+                              )
+                            : const Text('Masuk', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    // Or continue with Google
+                    Text('Or continue with', style: TextStyle(color: textColor.withOpacity(0.7))),
+                    const SizedBox(height: 20),
+                    
+                    GestureDetector(
+                      onTap: isLoading ? null : _loginGoogle,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isDark ? Colors.white12 : Colors.white,
+                          boxShadow: isDark ? [] : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            )
+                          ],
+                        ),
+                        child: Image.asset('assets/images/google_logo.png', height: 32, width: 32, errorBuilder: (c, e, s) => Icon(Icons.g_mobiledata, size: 40, color: textColor)),
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    // Sign Up Text
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account? ", style: TextStyle(color: textColor.withOpacity(0.7))),
+                        GestureDetector(
+                          onTap: () => Navigator.pushReplacementNamed(context, AppRouter.register),
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: textColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -238,4 +322,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}
+}

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // ── Brand (dipakai di kedua mode) ───────────────────────────
-  static const Color primary      = Color(0xFF1565C0); // biru utama
-  static const Color primaryLight = Color(0xFF1E88E5);
-  static const Color primaryDark  = Color(0xFF0D47A1);
-  static const Color accent       = Color(0xFF42A5F5); // biru muda (tombol di dark)
+  static const Color primary      = Color(0xFFDC143C); // Crimson Red (Light)
+  static const Color primaryLight = Color(0xFFE34261);
+  static const Color primaryDark  = Color(0xFFA50F2D);
+  static const Color accent       = Color(0xFFFFBF00); // Amber (Dark)
 
   // ── Light Mode ──────────────────────────────────────────────
   static const Color background    = Color(0xFFF5F5F5); // latar halaman
