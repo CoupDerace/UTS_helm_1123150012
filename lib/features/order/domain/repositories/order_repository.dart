@@ -5,6 +5,8 @@ abstract class OrderRepository {
     required String shippingAddress,
     String? notes,
     required String paymentMethod,
+    required double totalAmount,
+    required List<OrderItemModel> items,
   });
   Future<List<OrderModel>> getMyOrders({int page, int limit});
   Future<OrderModel> getOrderDetail(int orderId);

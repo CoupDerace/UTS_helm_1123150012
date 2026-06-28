@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:uts_catalog_helm/core/routes/app_router.dart';
 import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
 
-
 class OrderSuccessPage extends StatelessWidget {
   final OrderModel order;
 
-
   const OrderSuccessPage({super.key, required this.order});
-
 
   String _formatPrice(double price) {
     final str = price.toInt().toString();
@@ -21,7 +18,6 @@ class OrderSuccessPage extends StatelessWidget {
     }
     return 'Rp. ${buffer.toString().split('').reversed.join()}';
   }
-
 
   String _paymentMethodLabel(String method) {
     switch (method) {
@@ -39,11 +35,10 @@ class OrderSuccessPage extends StatelessWidget {
     }
   }
 
-
   String _statusLabel(String status) {
     switch (status) {
       case 'pending':
-        return 'Menunggu Pembayaran';
+        return 'Pembayaran Berhasil';
       case 'processing':
         return 'Sedang Diproses';
       case 'shipped':
@@ -57,13 +52,11 @@ class OrderSuccessPage extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
     final surface = Theme.of(context).colorScheme.surface;
     final onSurface = Theme.of(context).colorScheme.onSurface;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -94,20 +87,19 @@ class OrderSuccessPage extends StatelessWidget {
               Text(
                 'Pesanan Berhasil!',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: onSurface,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: onSurface,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Order #${order.id}',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 28),
-
 
               // Info box
               Container(
@@ -145,17 +137,15 @@ class OrderSuccessPage extends StatelessWidget {
                       _InfoRow(
                         label: 'Status',
                         value: _statusLabel(order.status),
-                        icon: Icons.info_outline,
-                        iconColor: Colors.orange,
+                        icon: Icons.check_circle,
+                        iconColor: Colors.green,
                       ),
                     ],
                   ),
                 ),
               ),
 
-
               const SizedBox(height: 32),
-
 
               // Tombol Lihat Detail
               SizedBox(
@@ -172,17 +162,12 @@ class OrderSuccessPage extends StatelessWidget {
                     foregroundColor: primary,
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRouter.myOrders,
-                    );
+                    Navigator.pushNamed(context, AppRouter.myOrders);
                   },
                 ),
               ),
 
-
               const SizedBox(height: 12),
-
 
               // Tombol Kembali ke Beranda
               SizedBox(
@@ -215,14 +200,12 @@ class OrderSuccessPage extends StatelessWidget {
   }
 }
 
-
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
   final Color iconColor;
   final bool valueBold;
-
 
   const _InfoRow({
     required this.label,
@@ -232,11 +215,9 @@ class _InfoRow extends StatelessWidget {
     this.valueBold = false,
   });
 
-
   @override
   Widget build(BuildContext context) {
     final onSurface = Theme.of(context).colorScheme.onSurface;
-
 
     return Row(
       children: [

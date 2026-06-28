@@ -21,8 +21,7 @@ class OrderItemModel {
     final quantity = json['quantity'] as int? ?? 0;
 
     return OrderItemModel(
-      productId:
-          json['product_id'] as int? ?? json['id'] as int? ?? 0,
+      productId: json['product_id'] as int? ?? json['id'] as int? ?? 0,
       productName:
           json['product_name'] as String? ??
           json['name'] as String? ??
@@ -30,8 +29,7 @@ class OrderItemModel {
           '',
       price: price,
       quantity: quantity,
-      subtotal:
-          (json['subtotal'] as num?)?.toDouble() ?? (price * quantity),
+      subtotal: (json['subtotal'] as num?)?.toDouble() ?? (price * quantity),
     );
   }
 
@@ -112,10 +110,14 @@ class OrderModel {
         json['payment_type'] as String? ??
         '';
 
-    debugPrint('[OrderModel] totalAmount=$totalAmount, status=$status, paymentMethod=$paymentMethod');
+    debugPrint(
+      '[OrderModel] totalAmount=$totalAmount, status=$status, paymentMethod=$paymentMethod',
+    );
 
     return OrderModel(
-      id: json['id'] as int? ?? 0,
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id'].toString()) ?? 0,
       totalAmount: totalAmount,
       status: status,
       shippingAddress: json['shipping_address'] as String? ?? '',
@@ -125,32 +127,6 @@ class OrderModel {
       vaNumber: json['va_number'] as String?,
       items: items,
       createdAt: json['created_at'] as String? ?? '',
-    );
-  }
-
-  OrderModel copyWith({
-    int? id,
-    double? totalAmount,
-    String? status,
-    String? shippingAddress,
-    String? notes,
-    String? paymentMethod,
-    String? gopayDeeplink,
-    String? vaNumber,
-    List<OrderItemModel>? items,
-    String? createdAt,
-  }) {
-    return OrderModel(
-      id: id ?? this.id,
-      totalAmount: totalAmount ?? this.totalAmount,
-      status: status ?? this.status,
-      shippingAddress: shippingAddress ?? this.shippingAddress,
-      notes: notes ?? this.notes,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
-      gopayDeeplink: gopayDeeplink ?? this.gopayDeeplink,
-      vaNumber: vaNumber ?? this.vaNumber,
-      items: items ?? this.items,
-      createdAt: createdAt ?? this.createdAt,
     );
   }
 

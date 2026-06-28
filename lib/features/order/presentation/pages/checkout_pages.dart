@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uts_catalog_helm/core/routes/app_router.dart';
 import 'package:uts_catalog_helm/features/cart/presentation/providers/cart_provider.dart';
-import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
 import 'package:uts_catalog_helm/features/order/presentation/providers/order_provider.dart';
+import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -89,16 +89,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final orderProv = context.read<OrderProvider>();
     final cartProv = context.read<CartProvider>();
 
-    // Simpan data cart SEBELUM di-clear (backend sering return total=0 & items=[])
-    final cartTotal = (cartProv.cart?.totalPrice ?? cartProv.cart?.total.toDouble() ?? 0.0);
-    final cartItems = (cartProv.cart?.items ?? []).map((ci) => OrderItemModel(
-      productId: ci.productId,
-      productName: ci.name,
-      price: ci.price,
-      quantity: ci.quantity,
-      subtotal: ci.price * ci.quantity,
-    )).toList();
-
     // loading
     showDialog(
       context: context,
@@ -110,6 +100,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
       shippingAddress: _addressCtrl.text.trim(),
       notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
       paymentMethod: _selectedPaymentMethod!,
+      totalAmount: (cartProv.cart?.totalPrice ?? 0).toDouble(),
+      items: cartProv.cart?.items.map((item) => OrderItemModel(
+        productId: item.productId,
+        productName: item.name,
+        price: item.price.toDouble(),
+        quantity: item.quantity,
+        subtotal: (item.price * item.quantity).toDouble(),
+      )).toList() ?? [],
     );
 
     if (!context.mounted) return;
@@ -121,15 +119,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
       if (!context.mounted) return;
 
-      var order = orderProv.lastOrder!;
-
-      // Patch order jika backend return total=0 atau items kosong
-      if (order.totalAmount == 0 && cartTotal > 0) {
-        order = order.copyWith(totalAmount: cartTotal);
-      }
-      if (order.items.isEmpty && cartItems.isNotEmpty) {
-        order = order.copyWith(items: cartItems);
-      }
+      final order = orderProv.lastOrder!;
 
       final needsPaymentFlow =
           order.paymentMethod == 'virtual_account' ||
@@ -271,7 +261,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
                         children: [
                           const Text(
-                            'Total Item',
+                            'Total Pembayaran',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -279,7 +269,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ),
 
                           Text(
-                            _formatPrice((cart?.total ?? 0).toDouble()),
+                            _formatPrice((cart?.totalPrice ?? 0).toDouble()),
 
                             style: TextStyle(
                               fontSize: 16,

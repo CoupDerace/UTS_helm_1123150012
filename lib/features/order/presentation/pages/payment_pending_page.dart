@@ -77,27 +77,49 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
   }
 
   Future<void> _launchGlobalInstitutePay() async {
-    // Ambil deskripsi dari notes order (jika ada)
-    final notes = widget.order.notes.isNotEmpty ? widget.order.notes : null;
+    try {
+      // Ambil deskripsi dari notes order (jika ada)
+      final notes = widget.order.notes.isNotEmpty ? widget.order.notes : null;
 
-    // Generate URL deeplink (dilakukan di sisi client, bukan dari backend)
-    final deeplinkUrl = GlobalInstitutePayService.buildDeeplinkUrl(
-      orderId: widget.order.id,
-      amount: widget.order.totalAmount,
-      description: notes,
-    );
+      // Generate deeplink URL
+      final deeplinkUrl = GlobalInstitutePayService.buildDeeplinkUrl(
+        orderId: widget.order.id,
+        amount: widget.order.totalAmount,
+        description: notes,
+      );
 
-    final uri = Uri.parse(deeplinkUrl);
+      final uri = Uri.parse(deeplinkUrl);
 
-    // Cek apakah aplikasi Dompet Kampus Global terpasang
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-      setState(() => _payLaunched = true); // ← Update UI langkah 1 ✓
-    } else {
+      debugPrint('================ DEEPLINK DEBUG ================');
+      debugPrint('URI              : $uri');
+      debugPrint('Scheme           : ${uri.scheme}');
+      debugPrint('Host             : ${uri.host}');
+      debugPrint('Path             : ${uri.path}');
+      debugPrint('Query            : ${uri.query}');
+      debugPrint('Query Params     : ${uri.queryParameters}');
+      debugPrint('================================================');
+
+      // LANGSUNG LAUNCH (tanpa canLaunchUrl)
+      final result = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+      debugPrint('launchUrl result : $result');
+
       if (!mounted) return;
+
+      setState(() {
+        _payLaunched = true;
+      });
+    } catch (e, st) {
+      debugPrint('================ ERROR LAUNCH ==================');
+      debugPrint('Error: $e');
+      debugPrint('$st');
+      debugPrint('================================================');
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Aplikasi Dompet Kampus Global tidak ditemukan'),
+        SnackBar(
+          content: Text('Gagal membuka Dompet Kampus: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -116,8 +138,12 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     return 'Rp. ${buffer.toString().split('').reversed.join()}';
   }
 
-  void _onPaymentSuccess() {
+  Future<void> _onPaymentSuccess() async {
     context.read<OrderProvider>().stopPaymentPolling();
+    await context.read<OrderProvider>().markOrderAsSuccess(widget.order.id);
+    
+    if (!mounted) return;
+    
     Navigator.pushNamedAndRemoveUntil(
       context,
       AppRouter.orderSuccess,

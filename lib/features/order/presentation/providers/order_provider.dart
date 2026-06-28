@@ -26,6 +26,8 @@ class OrderProvider extends ChangeNotifier {
     required String shippingAddress,
     String? notes,
     required String paymentMethod,
+    required double totalAmount,
+    required List<OrderItemModel> items,
   }) async {
     _setLoading();
 
@@ -34,6 +36,8 @@ class OrderProvider extends ChangeNotifier {
         shippingAddress: shippingAddress,
         notes: notes,
         paymentMethod: paymentMethod,
+        totalAmount: totalAmount,
+        items: items,
       );
 
       _lastOrder = result;
@@ -124,5 +128,17 @@ class OrderProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Future<void> markOrderAsSuccess(int orderId) async {
+    if (_repository is OrderRepositoryImpl) {
+      final repo = _repository as OrderRepositoryImpl;
+      repo.updateLocalStatus(orderId, 'success');
+      // Update last order if it matches
+      if (_lastOrder?.id == orderId) {
+        _lastOrder = await repo.getOrderDetail(orderId);
+      }
+      await fetchMyOrders();
+    }
   }
 }
