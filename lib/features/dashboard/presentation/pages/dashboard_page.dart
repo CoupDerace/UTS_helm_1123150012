@@ -16,7 +16,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedCategoryIndex = 0;
-  final List<String> _categories = ['FULL FACE', 'HALF FACE'];
+  final List<String> _categories = ['SEMUA', 'FULL FACE', 'HALF FACE'];
 
   @override
   void initState() {
@@ -44,8 +44,22 @@ class _DashboardPageState extends State<DashboardPage> {
 
     // Filter products by selected category
     final filteredProducts = product.products.where((p) {
-      if (_selectedCategoryIndex == 0) return p.category.toLowerCase().contains('full');
-      if (_selectedCategoryIndex == 1) return p.category.toLowerCase().contains('half');
+      if (_selectedCategoryIndex == 0) return true; // Semua produk
+      
+      final categoryLower = p.category.toLowerCase();
+      final nameLower = p.name.toLowerCase();
+
+      if (_selectedCategoryIndex == 1) {
+        // FULL FACE + CROSS
+        return categoryLower.contains('full') || nameLower.contains('full') ||
+               categoryLower.contains('cross') || nameLower.contains('cross');
+      }
+      if (_selectedCategoryIndex == 2) {
+        // HALF FACE + BOGO
+        return categoryLower.contains('half') || nameLower.contains('half') ||
+               categoryLower.contains('bogo') || nameLower.contains('bogo');
+      }
+      
       return true;
     }).toList();
 
