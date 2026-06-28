@@ -152,6 +152,8 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     );
   }
 
+  bool _isSuccessNavigating = false;
+
   @override
   Widget build(BuildContext context) {
     final orderProv = context.watch<OrderProvider>();
@@ -159,7 +161,8 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     final order = orderProv.lastOrder ?? widget.order;
 
     // Jika sudah terbayar, navigasi ke halaman sukses
-    if (payStatus == PaymentCheckStatus.paid) {
+    if (payStatus == PaymentCheckStatus.paid && !_isSuccessNavigating) {
+      _isSuccessNavigating = true;
       WidgetsBinding.instance.addPostFrameCallback((_) => _onPaymentSuccess());
     }
 
