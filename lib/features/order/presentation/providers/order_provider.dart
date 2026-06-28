@@ -92,7 +92,7 @@ class OrderProvider extends ChangeNotifier {
         stopPaymentPolling();
         return;
       }
-      await checkPaymentStatus(orderId);
+      await checkPaymentStatus(orderId, isPolling: true);
     });
   }
 
@@ -103,11 +103,13 @@ class OrderProvider extends ChangeNotifier {
 
   /// Cek status pembayaran dari backend.
   /// Jika order sudah bukan 'pending', set status ke [PaymentCheckStatus.paid].
-  Future<void> checkPaymentStatus(int id) async {
+  Future<void> checkPaymentStatus(int id, {bool isPolling = false}) async {
     if (_paymentCheckStatus == PaymentCheckStatus.checking) return;
 
-    _paymentCheckStatus = PaymentCheckStatus.checking;
-    notifyListeners();
+    if (!isPolling) {
+      _paymentCheckStatus = PaymentCheckStatus.checking;
+      notifyListeners();
+    }
 
     try {
       final updatedOrder = await _repository.getOrderDetail(id);
@@ -120,11 +122,15 @@ class OrderProvider extends ChangeNotifier {
         _paymentCheckStatus = PaymentCheckStatus.paid;
         stopPaymentPolling();
       } else {
-        _paymentCheckStatus = PaymentCheckStatus.idle;
+        if (!isPolling) {
+          _paymentCheckStatus = PaymentCheckStatus.idle;
+        }
       }
     } catch (e) {
       debugPrint('[OrderProvider] checkPaymentStatus error: $e');
-      _paymentCheckStatus = PaymentCheckStatus.idle;
+      if (!isPolling) {
+        _paymentCheckStatus = PaymentCheckStatus.idle;
+      }
     }
 
     notifyListeners();
