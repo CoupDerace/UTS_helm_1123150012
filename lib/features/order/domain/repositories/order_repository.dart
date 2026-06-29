@@ -1,0 +1,13 @@
+import 'package:uts_catalog_helm/features/order/data/models/order_model.dart';
+
+abstract class OrderRepository {
+  Future<OrderModel> checkout({
+    required String shippingAddress,
+    String? notes,
+    required String paymentMethod,
+    required double totalAmount,
+    required List<OrderItemModel> items,
+  });
+  Future<List<OrderModel>> getMyOrders({int page, int limit});
+  Future<OrderModel> getOrderDetail(int orderId);
+}
