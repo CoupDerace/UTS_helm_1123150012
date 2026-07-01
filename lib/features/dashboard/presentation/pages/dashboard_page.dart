@@ -300,7 +300,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                       child: Image.network(
                                         p.imageUrl,
-                                        fit: BoxFit.contain,
+                                        fit: BoxFit.cover,
                                         errorBuilder: (_, __, ___) => Icon(Icons.image_not_supported, size: 40, color: textColor.withOpacity(0.5)),
                                       ),
                                     ),

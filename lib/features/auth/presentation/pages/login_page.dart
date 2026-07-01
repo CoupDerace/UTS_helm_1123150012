@@ -135,38 +135,27 @@ class _LoginPageState extends State<LoginPage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    // Header with Back Button
-                    Row(
+                    // Header
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back, color: textColor),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Login',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w500,
-                                  color: textColor,
-                                ),
-                              ),
-                              Text(
-                                'The Helmets',
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w900,
-                                  color: textColor,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                            ],
+                        Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: textColor,
                           ),
                         ),
-                        const SizedBox(width: 48), // Balance for center alignment
+                        Text(
+                          'The Helmets',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                            color: textColor,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 50),
