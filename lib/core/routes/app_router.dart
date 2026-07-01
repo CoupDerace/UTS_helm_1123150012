@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import '../../../features/auth/presentation/pages/login_page.dart';
 import '../../../features/auth/presentation/pages/register_page.dart';
 import '../../../features/auth/presentation/pages/verify_email_page.dart';
-import '../../../features/dashboard/presentation/pages/dashboard_page.dart';
+import '../../../features/dashboard/presentation/pages/main_page.dart';
 import '../guards/authguard.dart';
 
 class AppRouter {
@@ -29,7 +29,7 @@ class AppRouter {
     login: (_) => const LoginPage(),
     register: (_) => const RegisterPage(),
     verifyEmail: (_) => const VerifyEmailPage(),
-    dashboard: (_) => const AuthGuard(child: DashboardPage()),
+    dashboard: (_) => const AuthGuard(child: MainPage()),
     cart: (_) => const CartPage(),
     checkout: (_) => const CheckoutPage(),
     orderSuccess: (context) {

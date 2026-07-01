@@ -119,34 +119,72 @@ class _DashboardPageState extends State<DashboardPage> {
                           );
                         },
                       ),
-                      // Logout Icon instead of profile
-                      IconButton(
-                        icon: Icon(Icons.logout, color: textColor),
-                        onPressed: () async {
-                          await auth.logout();
-                          if (!mounted) return;
-                          Navigator.pushReplacementNamed(context, AppRouter.login);
-                        },
-                      ),
                     ],
                   ),
                 ],
               ),
             ),
             
-            // THEME TOGGLE (Optional visual)
+            // PROMO BANNER
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(isDark ? 'Mode Gelap' : 'Mode Terang', style: TextStyle(color: textColor.withOpacity(0.6), fontSize: 14)),
-                  Switch(
-                    value: isDark,
-                    onChanged: (_) => context.read<ThemeProvider>().toggle(),
-                    activeColor: accentColor,
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/image/promo_banner.png',
+                      height: 120,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 120,
+                        color: accentColor.withOpacity(0.1),
+                        child: Center(
+                          child: Icon(Icons.image, color: accentColor, size: 40),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withOpacity(0.7),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 20,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Coba bayar dari toko online',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Simulasi checkout via DKG',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
