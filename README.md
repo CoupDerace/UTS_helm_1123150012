@@ -22,7 +22,7 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi di lingkungan loka
    - Emulator Android/iOS atau perangkat fisik yang terhubung.
 2. **Clone Repositori:**
    ```bash
-   git clone <url-repositori-anda>
+   git clone <https://github.com/CoupDerace/UTS_helm_1123150012.git>
    cd uts_catalog_helm
    ```
 3. **Instal Dependensi:**
