@@ -29,7 +29,7 @@ class OrderSuccessPage extends StatelessWidget {
       case 'virtual_account':
         return 'Virtual Account';
       case 'global_institute_pay':
-        return 'Global Institute Pay';
+        return 'Helmet Wallet';
       default:
         return method;
     }

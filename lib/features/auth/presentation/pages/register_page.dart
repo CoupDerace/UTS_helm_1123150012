@@ -78,6 +78,11 @@ class _RegisterPageState extends State<RegisterPage> {
               end: Alignment.bottomCenter,
               colors: bgColors,
             ),
+            image: const DecorationImage(
+              image: AssetImage('assets/image/mega_mendung.png'),
+              fit: BoxFit.cover,
+              opacity: 0.1,
+            ),
           ),
           child: SafeArea(
             child: SingleChildScrollView(

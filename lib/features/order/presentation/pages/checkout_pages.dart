@@ -23,8 +23,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   static const List<_PaymentOption> _paymentOptions = [
     _PaymentOption(
       value: 'global_institute_pay',
-      label: 'Global Institute Pay',
-      subtitle: 'Bayar instant dengan Dompet Kampus Global',
+      label: 'Helmet Wallet',
+      subtitle: 'Bayar instant dengan Helmet Wallet',
       icon: Icons.account_balance_wallet,
       iconColor: Color(0xFF00ADB5),
     ),
