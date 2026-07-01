@@ -1,63 +1,47 @@
-# UTS Mobile Application Lanjutan
+# UTS Catalog Helm
 
-# Pengembang
- * Muhammad Turtusi Afrizal Perdana 
- * 1123150012
- * TI SE 23 P1
- * Teknik Informatika
- * Software Engineering 
- * [Link-Youtube-presentation](https://youtu.be/M-ljx72LOR4?si=JOpEjEWGiu_ybY7P)
+## Deskripsi Aplikasi
+Aplikasi E-commerce Toko Helm adalah aplikasi mobile berbasis Flutter yang menyediakan platform untuk membeli helm. Aplikasi ini dilengkapi dengan fitur autentikasi Firebase yang mencakup verifikasi email dan login dengan akun Google. Selain itu, aplikasi juga memiliki tampilan modern dengan dukungan *Dark Mode* dan *Light Mode*. Aplikasi ini terhubung ke backend API berbasis Golang yang menggunakan database MySQL.
 
-# Aplikasi E-commerce Toko Helm
+## Arsitektur Aplikasi
+Aplikasi ini dibangun menggunakan arsitektur fitur-based atau Clean Architecture yang terbagi dalam direktori `core` (untuk komponen utama) dan `features` (untuk modul-modul spesifik). 
 
-## Tect Stack
-Aplikasi ini di rancang dengan :
+**Tech Stack Utama:**
+- **Front-End:** Flutter (Dart)
+- **State Management:** Provider
+- **Autentikasi:** Firebase Authentication (Email/Password & Google Sign-In)
+- **API Client:** Dio
+- **Back-End API:** Golang (dihosting secara terpisah)
+- **Database:** MySQL
 
-- [Flutter](https://docs.flutter.dev/get-started/learn-flutter) - Sebagai Front-End yg menerima respon dari beckend & Response User ke beckend
-- [Firebase](https://firebase.google.com/?hl=id) - Sebagai Authentikasi Verifikasi email-validation dan log-in Google
-- [Golang-beckend](https://github.com/muhamadayeshaaulia/semester6.4_Firebase_Authentication_Lanjutan.git) - sebagai backend API untuk menghubungkan Mysql ke Front-End
-- [Mysql](https://www.apachefriends.org/download.html) - sebagai database local
+## Cara Menjalankan Proyek
+Ikuti langkah-langkah di bawah ini untuk menjalankan aplikasi di lingkungan lokal Anda:
 
-# Tampilan UI untuk Aplikasi ini
+1. **Persyaratan Sistem:**
+   - Pastikan [Flutter SDK](https://docs.flutter.dev/get-started/install) (versi 3.9.2 atau lebih baru) sudah terinstal.
+   - Emulator Android/iOS atau perangkat fisik yang terhubung.
+2. **Clone Repositori:**
+   ```bash
+   git clone <url-repositori-anda>
+   cd uts_catalog_helm
+   ```
+3. **Instal Dependensi:**
+   Unduh semua dependensi yang dibutuhkan dengan perintah berikut:
+   ```bash
+   flutter pub get
+   ```
+4. **Jalankan Aplikasi:**
+   Pastikan emulator atau perangkat Anda siap, lalu jalankan:
+   ```bash
+   flutter run
+   ```
 
- * Tampilan ketika awal pertama kali aplikasi berjalan
-<p align="center">
- <img width="720" height="1612" alt="Screenshot_20260423-141536" src="https://github.com/user-attachments/assets/58f8f478-336b-45c6-a728-359bd6f27eae" />
-</p>
-
- * Tampilan halaman Login, register & email Verified
- <p align="center">
-<img width="720" height="1612" alt="Screenshot_20260423-131115" src="https://github.com/user-attachments/assets/1bf0140d-afcd-4b9a-ac3e-fb82a8a9775a" />
-<img width="720" height="1612" alt="Screenshot_20260423-131140" src="https://github.com/user-attachments/assets/b739236e-73f4-456f-9d05-7b5d26c9abd5" />
-<img width="720" height="1612" alt="Screenshot_20260423-141117" src="https://github.com/user-attachments/assets/efa4ce08-5d9d-4f7d-b1cf-af366b95fd67" />
-</p>
-
-
- * Setelah email terverifikasi makan aplikasi langsung mengarahkan ke halaman dashboard
- <p align="center">
-  <img width="720" height="1612" alt="Screenshot_20260423-131104" src="https://github.com/user-attachments/assets/c1125d1f-27af-4f00-805a-283dd3db96bb" />
-
-</p>
-
- * ketika user login langsung menggunakan Google
-  <p align="center">
-  <img width="720" height="1612" alt="Screenshot_20260423-131121" src="https://github.com/user-attachments/assets/dc3fd6d5-c4b4-49a5-aa10-7e866fed0ac2" />
-
-</p>
-
- * langsung menampilkan halaman dashboard dan username di dashboard menyesuaikan dengan username yang sudah di atur pada akun Google
- <p align="center">
-<img width="720" height="1612" alt="Screenshot_20260423-131132" src="https://github.com/user-attachments/assets/01590067-2295-4934-8758-d0fa9ccdb92a" />
-
- </p>
-
- </p>
-
- * tambah fitur dark mode ( mode gelap )
- <p align="center">
-ketika light mode
-<img width="720" height="1612" alt="Screenshot_20260504-153555" src="https://github.com/user-attachments/assets/1690ffab-a057-4609-8f1d-5a41e66cb82b" />
-ketika dark mode
-<img width="720" height="1612" alt="Screenshot_20260504-153535" src="https://github.com/user-attachments/assets/8acb1548-a4e1-41e9-8360-5ba4c0ac7a73" />
-
- </p>
+## Daftar Dependensi Utama
+Berikut adalah dependensi utama yang digunakan dalam pengembangan aplikasi ini, seperti yang tercantum pada `pubspec.yaml`:
+- **flutter:** Framework UI utama.
+- **provider** (`^6.1.2`): Untuk manajemen state aplikasi.
+- **firebase_core** (`^3.6.0`), **firebase_auth** (`^5.3.1`), **google_sign_in** (`^6.2.1`): Untuk layanan backend dan autentikasi.
+- **dio** (`^5.7.0`): Untuk melakukan HTTP requests ke backend API.
+- **flutter_secure_storage** (`^9.2.2`): Untuk penyimpanan data sensitif secara aman.
+- **shared_preferences** (`^2.5.5`): Untuk penyimpanan data lokal yang ringan.
+- **image_picker** (`^1.2.2`): Untuk memilih gambar dari galeri perangkat.

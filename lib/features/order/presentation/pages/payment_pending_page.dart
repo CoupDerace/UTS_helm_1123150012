@@ -543,7 +543,7 @@ class _GlobalInstitutePayBody extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Bayar dengan Dompet Global',
+            'Bayar dengan Dompet Helm',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: onSurface,
