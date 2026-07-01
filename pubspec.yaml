@@ -87,6 +87,7 @@ flutter:
     - assets/image/mega_mendung.png
     - assets/image/logo_helm.jpeg
     - assets/image/promo_banner.png
+    - assets/image/poster.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

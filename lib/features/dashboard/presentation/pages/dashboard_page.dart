@@ -134,7 +134,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   alignment: Alignment.center,
                   children: [
                     Image.asset(
-                      'assets/image/promo_banner.png',
+                      'assets/image/poster.png',
                       height: 120,
                       width: double.infinity,
                       fit: BoxFit.cover,
