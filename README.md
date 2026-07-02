@@ -13,6 +13,80 @@ Aplikasi E-commerce Toko Helm adalah aplikasi mobile berbasis Flutter yang menye
 ## Arsitektur Aplikasi
 Aplikasi ini dibangun menggunakan arsitektur fitur-based atau Clean Architecture yang terbagi dalam direktori `core` (untuk komponen utama) dan `features` (untuk modul-modul spesifik). 
 
+### Struktur Folder
+UTS_helm_1123150012
+│
+├── android/
+├── ios/
+├── linux/
+├── macos/
+├── web/
+├── windows/
+│
+├── assets/
+│   ├── fonts/
+│   ├── icons/
+│   └── images/
+│
+├── lib/
+│   ├── main.dart
+│   │
+│   ├── core/
+│   │   ├── constants/
+│   │   │   └── api_constant.dart
+│   │   ├── routes/
+│   │   │   └── app_router.dart
+│   │   ├── services/
+│   │   │   ├── api_service.dart
+│   │   │   └── global_institute_pay_service.dart
+│   │   └── utils/
+│   │
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── data/
+│   │   │   ├── presentation/
+│   │   │   └── providers/
+│   │   │
+│   │   ├── product/
+│   │   │   ├── data/
+│   │   │   │   ├── models/
+│   │   │   │   └── repositories/
+│   │   │   ├── presentation/
+│   │   │   │   ├── pages/
+│   │   │   │   └── widgets/
+│   │   │   └── providers/
+│   │   │
+│   │   ├── cart/
+│   │   │   ├── data/
+│   │   │   ├── presentation/
+│   │   │   └── providers/
+│   │   │
+│   │   ├── order/
+│   │   │   ├── data/
+│   │   │   │   └── models/
+│   │   │   │       └── order_model.dart
+│   │   │   ├── presentation/
+│   │   │   │   ├── pages/
+│   │   │   │   └── providers/
+│   │   │   │       └── order_provider.dart
+│   │   │   └── services/
+│   │   │
+│   │   └── checkout/
+│   │       ├── data/
+│   │       ├── presentation/
+│   │       └── providers/
+│   │
+│   └── shared/
+│       ├── themes/
+│       ├── widgets/
+│       └── extensions/
+│
+├── test/
+├── pubspec.yaml
+├── README.md
+└── .gitignore
+
+
 **Tech Stack Utama:**
 - **Front-End:** Flutter (Dart)
 - **State Management:** Provider
