@@ -134,7 +134,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   alignment: Alignment.center,
                   children: [
                     Image.asset(
-                      'assets/image/promo_banner.png',
+                      'assets/image/poster.png',
                       height: 120,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -165,7 +165,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Coba bayar dari toko online',
+                            'Koleksi Helm Premium',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -174,7 +174,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Simulasi checkout via DKG',
+                            'Dapatkan diskon spesial hari ini!',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 12,
