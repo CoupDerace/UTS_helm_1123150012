@@ -5,7 +5,7 @@
  * TI SE 23 P1
  * Teknik Informatika
  * Software Engineering   
- * [Link-Youtube-presentation](   )
+ * [Link-Youtube-presentation](https://youtu.be/eaOdBzlhGT8?si=hcxhMzmdavuXZM4F)
 
 ## Deskripsi Aplikasi
 Aplikasi E-commerce Toko Helm adalah aplikasi mobile berbasis Flutter yang menyediakan platform untuk membeli helm. Aplikasi ini dilengkapi dengan fitur autentikasi Firebase yang mencakup verifikasi email dan login dengan akun Google. Selain itu, aplikasi juga memiliki tampilan modern dengan dukungan *Dark Mode* dan *Light Mode*. Aplikasi ini terhubung ke backend API berbasis Golang yang menggunakan database MySQL.
