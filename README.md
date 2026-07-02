@@ -13,79 +13,132 @@ Aplikasi E-commerce Toko Helm adalah aplikasi mobile berbasis Flutter yang menye
 ## Arsitektur Aplikasi
 Aplikasi ini dibangun menggunakan arsitektur fitur-based atau Clean Architecture yang terbagi dalam direktori `core` (untuk komponen utama) dan `features` (untuk modul-modul spesifik). 
 
-### Struktur Folder
-UTS_helm_1123150012
-│
-├── android/
-├── ios/
-├── linux/
-├── macos/
-├── web/
-├── windows/
-│
-├── assets/
-│   ├── fonts/
-│   ├── icons/
-│   └── images/
-│
-├── lib/
-│   ├── main.dart
-│   │
-│   ├── core/
-│   │   ├── constants/
-│   │   │   └── api_constant.dart
-│   │   ├── routes/
-│   │   │   └── app_router.dart
-│   │   ├── services/
-│   │   │   ├── api_service.dart
-│   │   │   └── global_institute_pay_service.dart
-│   │   └── utils/
-│   │
-│   ├── features/
-│   │   ├── auth/
-│   │   │   ├── data/
-│   │   │   ├── presentation/
-│   │   │   └── providers/
-│   │   │
-│   │   ├── product/
-│   │   │   ├── data/
-│   │   │   │   ├── models/
-│   │   │   │   └── repositories/
-│   │   │   ├── presentation/
-│   │   │   │   ├── pages/
-│   │   │   │   └── widgets/
-│   │   │   └── providers/
-│   │   │
-│   │   ├── cart/
-│   │   │   ├── data/
-│   │   │   ├── presentation/
-│   │   │   └── providers/
-│   │   │
-│   │   ├── order/
-│   │   │   ├── data/
-│   │   │   │   └── models/
-│   │   │   │       └── order_model.dart
-│   │   │   ├── presentation/
-│   │   │   │   ├── pages/
-│   │   │   │   └── providers/
-│   │   │   │       └── order_provider.dart
-│   │   │   └── services/
-│   │   │
-│   │   └── checkout/
-│   │       ├── data/
-│   │       ├── presentation/
-│   │       └── providers/
-│   │
-│   └── shared/
-│       ├── themes/
-│       ├── widgets/
-│       └── extensions/
-│
-├── test/
-├── pubspec.yaml
-├── README.md
-└── .gitignore
-
+```text
+lib/
+|   firebase_options.dart
+|   main.dart
+|   
++---core
+|   +---constants
+|   |       api_constant.dart
+|   |       app_colors.dart
+|   |       app_string.dart
+|   |       
+|   +---guards
+|   |       authguard.dart
+|   |       
+|   +---providers
+|   |       theme_provider.dart
+|   |       
+|   +---routes
+|   |       app_router.dart
+|   |       
+|   +---services
+|   |       biometric_lock_provider.dart
+|   |       dio_client.dart
+|   |       global_institute_pay_service.dart
+|   |       notification_service.dart
+|   |       secure_storage.dart
+|   |       
+|   \---theme
+|           app_theme.dart
+|           
+\---features
+    +---auth
+    |   +---data
+    |   |   +---models
+    |   |   |       auth_response_model.dart
+    |   |   |       
+    |   |   \---repositories
+    |   |           auth_repositor_imply.dart
+    |   |           
+    |   +---domain
+    |   |   \---repositories
+    |   |           auth_repository.dart
+    |   |           
+    |   \---presentation
+    |       +---pages
+    |       |       login_page.dart
+    |       |       register_page.dart
+    |       |       verify_email_page.dart
+    |       |       
+    |       +---providers
+    |       |       auth_provider.dart
+    |       |       
+    |       \---widgets
+    |               auth_header.dart
+    |               custom_button.dart
+    |               custom_text_field.dart
+    |               divider_with_text.dart
+    |               google_sign_in_button.dart
+    |               loading_overlay.dart
+    |               
+    +---cart
+    |   +---data
+    |   |   +---models
+    |   |   |       cart_model.dart
+    |   |   |       
+    |   |   \---repositories
+    |   |           cart_repository_impl.dart
+    |   |           
+    |   +---domain
+    |   |   \---repositories
+    |   |           cart_repository.dart
+    |   |           
+    |   \---presentation
+    |       +---pages
+    |       |       cart_pages.dart
+    |       |       
+    |       \---providers
+    |               cart_provider.dart
+    |               
+    +---dashboard
+    |   +---data
+    |   |   +---models
+    |   |   |       product_model.dart
+    |   |   |       
+    |   |   \---repositories
+    |   |           product_repository_impl.dart
+    |   |           
+    |   +---domain
+    |   |   \---repositories
+    |   |           product_repository.dart
+    |   |           
+    |   \---presentation
+    |       +---pages
+    |       |       dashboard_page.dart
+    |       |       main_page.dart
+    |       |       
+    |       \---providers
+    |               product_provider.dart
+    |               
+    +---order
+    |   +---data
+    |   |   +---models
+    |   |   |       order_model.dart
+    |   |   |       
+    |   |   \---repositories
+    |   |           order_repository_impl.dart
+    |   |           
+    |   +---domain
+    |   |   \---repositories
+    |   |           order_repository.dart
+    |   |           
+    |   \---presentation
+    |       +---pages
+    |       |       checkout_pages.dart
+    |       |       my_orders_page.dart
+    |       |       order_success_page.dart
+    |       |       payment_pending_page.dart
+    |       |       
+    |       \---providers
+    |               order_provider.dart
+    |               
+    \---profile
+        \---presentation
+            \---pages
+                    profile_page.dart
+```
 
 **Tech Stack Utama:**
 - **Front-End:** Flutter (Dart)
